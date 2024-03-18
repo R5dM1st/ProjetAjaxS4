@@ -1,0 +1,33 @@
+.card {
+    margin: 0 auto;
+    width: 400px;
+    background-color: white;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.card-title {
+    margin-top: 20px;
+}
+
+.card-text {
+    margin-top: 20px;
+}
+
+.btn {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row {
+    margin-top: 50px;
+}
+
+.col-sm-6 {
+    margin-bottom: 50px;
+}
+h1{
+    text-align: center;
+    padding: 50px;
+    color: white;
+}
