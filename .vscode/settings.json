@@ -6,9 +6,9 @@
             "port": 5432,
             "askForPassword": true,
             "driver": "PostgreSQL",
-            "name": "postgres",
-            "username": "postgres",
-            "database": "projetajax"
+            "name": "emile",
+            "database": "projetajaxs4",
+            "username": "emile"
         }
     ]
 }
