@@ -2,7 +2,7 @@
 <?php
     const dbuser = 'emile';
     const db_pwd = 'root';
-    const dbname = 'projetphpcir2';
+    const dbname = 'projetajaxs4';
     const dbserver ='127.0.0.1';
     const dbport ='5432';
 ?>
