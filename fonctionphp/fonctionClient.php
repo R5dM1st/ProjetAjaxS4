@@ -13,6 +13,26 @@ function getNomPrenomClient($email){
         }
     }
 }
+function get_allclients()
+{
+    $db= dbConnect();
+    try
+    {
+        $request = 'SELECT * FROM client';
+        $statement = $db->prepare($request);
+        $statement->execute();
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch (PDOException $exception)
+    {
+        error_log('Erreur de requête : ' . $exception->getMessage());
+        return false;
+    }
+    
+    return $result;
+}
+
+
 
 function getClientId($email){
     $conn = dbConnect();

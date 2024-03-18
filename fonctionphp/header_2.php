@@ -7,7 +7,7 @@
                 <div class="collapse navbar-collapse" id="profile">
                 <div class="navbar-nav mx-auto">
                 <?php
-                        include "database.php";
+                        include "main.php";
                         session_start();
                         $email_medecin = $_SESSION['email_medecin'];
                         $email_client = $_SESSION['email_client'];
