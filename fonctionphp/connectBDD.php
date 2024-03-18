@@ -1,5 +1,6 @@
 <?php
-include "BDD/constants.php";
+    include "BDD/constants.php";
+    //include "BDD/constantsP.php";
 function dbConnect(){
     try {
         $dsn = "pgsql:host=" . dbserver . ";port=" . dbport . ";dbname=" . dbname . ";user=" . dbuser . ";password=" . db_pwd;
