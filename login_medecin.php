@@ -40,7 +40,8 @@
 
                 if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
                     $_SESSION['email_medecin'] = $email;
-                    header('Location: home_log_medecin.php');
+                    $infoconnexion = getInfoConnexion($email,$password);
+                    header('Location: ./index.html');
                     exit();
                 } else {
                     $messageErreur = "Identifiants incorrects. Veuillez réessayer.";

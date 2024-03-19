@@ -9,6 +9,16 @@
             "name": "emile",
             "database": "projetajaxs4",
             "username": "emile"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "postgres",
+            "database": "projetajax",
+            "username": "postgres"
         }
     ]
 }
