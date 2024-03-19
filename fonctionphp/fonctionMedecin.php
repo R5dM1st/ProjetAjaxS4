@@ -112,7 +112,7 @@ function findAllType(){
     $conn = dbConnect();
     if ($conn) {
         try {
-            $result = $conn->query("SELECT * FROM TypeDemande");
+            $result = $conn->query("SELECT * FROM typedemande");
             $result->setFetchMode(PDO::FETCH_ASSOC);
             $result = $result->fetchAll();
             return $result;

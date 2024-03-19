@@ -22,11 +22,7 @@
 </head>
 
 <body>
-<header>
-<?php
-        include "fonctionphp/header_1.php";
-        ?>
-    </header>
+
     <div class="dropdown">
         <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" method="post">
             <h2>Inscrivez-vous</h2>
@@ -74,6 +70,7 @@
             <div class="form-group">
                 <select type="text" class="form-control" name="from-type" id="from-type" placeholder="Type de consultation" required>
                     <?php
+                        include "database.php";
                         afficheType();
                     ?>
                 </select>

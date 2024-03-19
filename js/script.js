@@ -1,50 +1,53 @@
-window.onload = () => {
-    var prenom, nom;
+function profileUtilisateur() {
+    const profile = document.getElementById('profile');
+    const circleContainer = document.getElementById('circleContainer');
 
-    if (localStorage.prenom != null) {
-        prenom = localStorage.prenom;
+    const circleStyles = document.createElement('style');
+    circleStyles.innerHTML = `
+        #vert, #rouge {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        #vert {
+            background-color: green;
+        }
+        #rouge {
+            background-color: red;
+        }
+    `;
+    document.head.appendChild(circleStyles);
+
+    const prenom = sessionStorage.getItem('prenom');
+    const nom = sessionStorage.getItem('nom');
+    if (prenom && nom) {
+        const userInfo = document.createElement('div');
+        userInfo.innerHTML = `<h5>${prenom} ${nom}</h5>`;
+        profile.appendChild(userInfo);
+
+        const greenCircle = document.createElement('div');
+        greenCircle.id = 'vert';
+        circleContainer.appendChild(greenCircle);
+
+        greenCircle.addEventListener('click', () => {
+            sessionStorage.clear();
+            location.reload(); 
+        });
     } else {
-        prenom = prompt("Entrez votre prénom");
-        localStorage.prenom = prenom;
-    }
-    
-    if (localStorage.nom != null) {
-        nom = localStorage.nom;
-    } else {
-        nom = prompt("Entrez votre nom");
-        localStorage.nom = nom;
-    }
-
-    var bonjourDiv = document.querySelector('#profile');
-    bonjourDiv.textContent = 'Bonjour ' + prenom + ' ' + nom;
-    var profileLink = document.querySelector('#profile-link');
-    var vertDiv = document.createElement('div');
-    var rougeDiv = document.createElement('div');
-
-    vertDiv.id = 'vert';
-    vertDiv.style.width = '15px';
-    vertDiv.style.height = '15px';
-    vertDiv.style.backgroundColor = 'green';
-    vertDiv.style.borderRadius = '50%';
-    vertDiv.style.display = 'inline-block';
-
-    rougeDiv.id = 'rouge';
-    rougeDiv.style.width = '15px';
-    rougeDiv.style.height = '15px';
-    rougeDiv.style.backgroundColor = 'red';
-    rougeDiv.style.borderRadius = '50%';
-    rougeDiv.style.display = 'inline-block';
-
-    if (localStorage.prenom != null && localStorage.nom != null) {
-        profileLink.innerHTML = '<a href="home.php"><h5>' + localStorage.prenom + ' ' + localStorage.nom + '</h5></a>';
-        profileLink.appendChild(vertDiv);
-    } else {
-        profileLink.appendChild(rougeDiv);
+        const redCircle = document.createElement('div');
+        redCircle.id = 'rouge';
+        circleContainer.appendChild(redCircle);
+        redCircle.addEventListener('click', () => {
+            const prenom = prompt('Entrez votre prénom:');
+            const nom = prompt('Entrez votre nom:');
+            if (prenom && nom) {
+                sessionStorage.setItem('prenom', prenom);
+                sessionStorage.setItem('nom', nom);
+                location.reload(); 
+            }
+        });
     }
 }
 
-function supprimerStockageLocal() {
-    localStorage.removeItem('prenom');
-    localStorage.removeItem('nom');
-    window.location.reload();
-}
+document.addEventListener('DOMContentLoaded', profileUtilisateur);
