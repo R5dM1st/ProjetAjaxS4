@@ -196,4 +196,13 @@ function profileUtilisateur2($email_client,$email_medecin){
     }
     
 }
+
+function getInfoConnexion($email,$password){
+    $logininfo = json_encode(array(
+        "email" => $email,
+        "mot_de_passe" => $password
+    ));
+    return $logininfo;
+
+}
 ?>

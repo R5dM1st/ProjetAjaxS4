@@ -33,14 +33,16 @@
             <?php
             session_start();
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                header('Location: logout.php');
+                header('Location: ../index.html');
                 $email = $_POST['email'];
                 $password = $_POST['mdp'];
+                
 
                 $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
 
                 if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
                     $_SESSION['email_client'] = $email;
+                    $infoconnect = getInfoConnexion($email,$password);
                     header('Location: home_log_client.php');
                     exit();
                 } else {
