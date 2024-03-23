@@ -21,11 +21,7 @@
 </head>
 
 <body>
-<header>
-<?php
-        include "fonctionphp/header_1.php";
-        ?>
-    </header>
+
 
     <div class="dropdown">
         <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" method="post">
@@ -33,17 +29,20 @@
             <?php
             session_start();
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                header('Location: ../index.html');
-                $email = $_POST['email'];
-                $password = $_POST['mdp'];
-                
 
                 $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
 
                 if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
                     $_SESSION['email_client'] = $email;
                     $infoconnect = getInfoConnexion($email,$password);
-                    header('Location: home_log_client.php');
+                    $nom=getNomByEmailClient($email);
+                    $prenom=getPrenomByEmailClient($email);
+                    echo "<script type='text/javascript'>
+                    sessionStorage.setItem('prenom', <?php echo json_encode($prenom); ?>);
+                    sessionStorage.setItem('nom', <?php echo json_encode($nom); ?>);
+                </script>";
+                    
+                    
                     exit();
                 } else {
                     $messageErreur = "Identifiants incorrects. Veuillez réessayer.";
@@ -67,6 +66,13 @@
             ?>
         </form>
     </div>
+    <script type="text/javascript">
+    var firstname = <?php $prenom ?>;
+    var lastname = <?php $nom ?>;
+    sessionStorage.setItem('prenom',);
+    sessionStorage.setItem('nom', <?php echo json_encode($nom); ?>);
+</script>
+
 </body>
 
 </html>

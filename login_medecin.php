@@ -1,11 +1,32 @@
+<?php
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['mdp'];
+    include 'database.php';
+    $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
+    if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
+        $infoconnexion = getInfoConnexion($email,$password);
+        $nom = getNomByEmailMedecin($email);
+        $prenom = getPrenomByEmailMedecin($email);
+        $_SESSION['prenom'] = $prenom;
+        $_SESSION['nom'] = $nom;
+    } else {
+        $messageErreur = "Identifiants incorrects. Veuillez réessayer.";
+    }
+}
+if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
+    session_destroy();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EPHealth</title>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="style/style.css" rel="stylesheet">
     <style>
@@ -18,36 +39,11 @@
         }
     </style>
 </head>
-
 <body>
-<header>
-<?php
-        include "fonctionphp/header_1.php";
-        ?>
-    </header>
-
+    <header></header>
     <div class="dropdown">
         <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" method="post">
             <h2>Connectez-vous</h2>
-            <?php
-            session_start();
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                header('Location: logout.php');
-                $email = $_POST['email'];
-                $password = $_POST['mdp'];
-
-                $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
-
-                if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
-                    $_SESSION['email_medecin'] = $email;
-                    $infoconnexion = getInfoConnexion($email,$password);
-                    header('Location: ./index.html');
-                    exit();
-                } else {
-                    $messageErreur = "Identifiants incorrects. Veuillez réessayer.";
-                }
-            }
-            ?>
             <div class="form-group">
                 <label for="email">Entre ton mail</label>
                 <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com" required>
@@ -58,14 +54,21 @@
             </div>
             <button type="submit" class="btn btn-primary">Valider</button>
             <a class="dropdown-item" href="register_medecin.php">Vous n'avez pas de compte ?</a>
-            <?php
-            if (isset($messageErreur)) {
+            <?php if (isset($messageErreur)) {
                 echo "<p style='color:red;'>$messageErreur</p>";
-                header("refresh:2;url=login_medecin.php");
-            }
-            ?>
+            } ?>
         </form>
     </div>
-</body>
 
+
+    <script>
+        <?php if(isset($_SESSION['prenom']) && isset($_SESSION['nom'])) { ?>
+            sessionStorage.setItem('prenom', <?php echo json_encode($_SESSION['prenom']); ?>);
+            sessionStorage.setItem('nom', <?php echo json_encode($_SESSION['nom']); ?>);
+            window.location.replace("index.html");
+            session_destroy();
+            
+        <?php } ?>
+    </script>
+</body>
 </html>

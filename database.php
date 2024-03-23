@@ -1,3 +1,3 @@
 <?php
-    include "./fonctionphp/main.php";
+include "fonctionphp/main.php";
 ?>

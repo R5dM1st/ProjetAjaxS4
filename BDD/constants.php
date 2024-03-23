@@ -1,4 +1,3 @@
-<!-- fonction de connection BDD de emile -->
 <?php
     const dbuser = 'emile';
     const db_pwd = 'root';

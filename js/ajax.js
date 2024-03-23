@@ -1,51 +1,34 @@
-function ajaxRequest(type, url, callback, data = null)
-{
-  let xhr;
 
-  // Create XML HTTP request.
-  xhr = new XMLHttpRequest();
-  if (type == 'GET' && data != null)
-    url += '?' + data;
-  xhr.open(type, url);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-  // Add the onload function.
-  xhr.onload = () =>
-  {
-    switch (xhr.status)
-    {
-      case 200:
-      case 201:
-        console.log(xhr.responseText);
-        callback(JSON.parse(xhr.responseText));
-        break;
-      default:
-        httpErrors(xhr.status);
-    }
+function ajaxRequest(method, url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open(method, url, true);
+  xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+          callback(xhr.responseText);
+      }
   };
-
-  // Send XML HTTP request.
-  xhr.send(data);
+  xhr.send();
 }
-function httpErrors(errorCode)
-{
-  let messages = {
-    400: 'Requête incorrecte',
-    401: 'Authentifiez vous',
-    403: 'Accès refusé',
-    404: 'Page non trouvée',
-    500: 'Erreur interne du serveur',
-    503: 'Service indisponible'
-  };
 
-  // Display error.
-  if (errorCode in messages)
-  {
-    $('#errors').html('<strong>' + messages[errorCode] + '</strong>');
-    $('#errors').show();
-    setTimeout(() =>
-    {
-      $('#errors').hide();
-    }, 5000);
-  }
+
+function displayClient(response) {
+  var clients = JSON.parse(response);
+  var clientInfo = document.getElementById('client-info');
+  clientInfo.innerHTML = '';
+  clients.forEach(function (client) {
+      var clientDiv = document.createElement('div');
+      clientDiv.innerHTML = `
+          <p>Nom: ${client.nom_client}</p>
+          <p>Prénom: ${client.prenom_client}</p>
+          <p>Téléphone: ${client.telephone_client}</p>
+
+      `;
+      clientInfo.appendChild(clientDiv);
+  });
 }
+
+$('#all-button').on('click', () => {
+  currentTitle = 'Liste des client inscript';
+
+  ajaxRequest('GET', './get_client.php', displayClient);
+});

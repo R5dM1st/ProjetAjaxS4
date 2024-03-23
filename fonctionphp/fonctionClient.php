@@ -13,6 +13,32 @@ function getNomPrenomClient($email){
         }
     }
 }
+function getNomByEmailClient($email){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT nom_client FROM client WHERE mail_client = '$email'");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result[0]['nom_client'];
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+}
+function getPrenomByEmailClient($email){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT prenom_client FROM client WHERE mail_client = '$email'");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result[0]['prenom_client'];
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+}
 function get_allclients()
 {
     $db= dbConnect();

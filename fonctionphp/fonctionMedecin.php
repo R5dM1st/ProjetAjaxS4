@@ -12,6 +12,32 @@ function getNomPrenomMedecin($email){
         }
     }
 }
+function getNomByEmailMedecin($email){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT nom_medecin FROM medecin WHERE mail_medecin = '$email'");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result[0]['nom_medecin'];
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+}
+function getPrenomByEmailMedecin($email){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT prenom_medecin FROM medecin WHERE mail_medecin = '$email'");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result[0]['prenom_medecin'];
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+}
 function getMailById($id){
     $conn = dbConnect();
     if ($conn) {
@@ -55,6 +81,19 @@ function getNomMedecin($id){
             }
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
+        }
+    }
+}
+function get_allmedecin(){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT * FROM medecin");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result;
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
         }
     }
 }
