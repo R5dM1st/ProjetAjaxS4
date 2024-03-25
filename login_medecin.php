@@ -12,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $prenom = getPrenomByEmailMedecin($email);
         $_SESSION['prenom'] = $prenom;
         $_SESSION['nom'] = $nom;
+        $_SESSION['email'] = $email;
+        $_SESSION['profile'] = 2;
     } else {
         $messageErreur = "Identifiants incorrects. Veuillez réessayer.";
     }
@@ -62,9 +64,11 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
 
 
     <script>
-        <?php if(isset($_SESSION['prenom']) && isset($_SESSION['nom'])) { ?>
+        <?php if(isset($_SESSION['prenom']) && isset($_SESSION['nom']) && isset($_SESSION['email'])) { ?>
             sessionStorage.setItem('prenom', <?php echo json_encode($_SESSION['prenom']); ?>);
             sessionStorage.setItem('nom', <?php echo json_encode($_SESSION['nom']); ?>);
+            sessionStorage.setItem('email', <?php echo json_encode($_SESSION['email']); ?>);
+            sessionStorage.setItem('profile', <?php echo json_encode($_SESSION['profile']); ?>);
             window.location.replace("index.html");
             session_destroy();
             

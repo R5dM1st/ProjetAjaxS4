@@ -9,6 +9,7 @@ function profileUtilisateur() {
             height: 15px;
             border-radius: 50%;
             display: inline-block;
+            
         }
         #vert {
             background-color: green;
@@ -16,11 +17,23 @@ function profileUtilisateur() {
         #rouge {
             background-color: red;
         }
+        #vert:hover, #rouge:hover {
+            cursor: pointer;
+        }
+        #nav_container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            padding-left: 150px;
+        }
+        
     `;
     document.head.appendChild(circleStyles);
 
     const prenom = sessionStorage.getItem('prenom');
     const nom = sessionStorage.getItem('nom');
+    
+
     if (prenom && nom) {
         const userInfo = document.createElement('div');
         userInfo.innerHTML = `<h5>${prenom} ${nom}</h5>`;
@@ -39,8 +52,6 @@ function profileUtilisateur() {
         redCircle.id = 'rouge';
         circleContainer.appendChild(redCircle);
         redCircle.addEventListener('click', () => {
-            const prenom = prompt('Entrez votre prénom:');
-            const nom = prompt('Entrez votre nom:');
             if (prenom && nom) {
                 sessionStorage.setItem('prenom', prenom);
                 sessionStorage.setItem('nom', nom);

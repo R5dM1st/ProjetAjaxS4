@@ -64,6 +64,7 @@
             <?php
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            include 'database.php';
             $nom = $_POST['form-lastname'];
             $prenom = $_POST['form-firstname'];
             $telephone = $_POST['from-tel'];
