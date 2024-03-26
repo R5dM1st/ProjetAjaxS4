@@ -1,6 +1,20 @@
 <?php
 
 // ------------------------Fonction pour les heures------------------------//
+function get_allheure(){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $stmt = $conn->prepare("SELECT * FROM heuredisponible");
+            $stmt->execute();
+            $rdvs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $rdvs;
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+    return array();
+}
 function recupereIDHeure($id_medecin, $date, $heure){
     $conn = dbConnect();
     $id_heure_dispo = null;

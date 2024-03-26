@@ -51,3 +51,6 @@ INSERT INTO typedemande (nom_type_demande) VALUES
     ('Consultation'),
     ('Urgence'),
     ('Visite à domicile');
+
+
+

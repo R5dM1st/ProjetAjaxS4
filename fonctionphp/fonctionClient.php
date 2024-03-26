@@ -1,18 +1,39 @@
 <?php
 // ------------------------Fonction pour les clients------------------------//
-function getNomPrenomClient($email){
+function get_clientsById($id){
     $conn = dbConnect();
     if ($conn) {
         try {
-            $result = $conn->query("SELECT nom_client, prenom_client FROM client WHERE mail_client = '$email'");
-            $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result = $result->fetchAll();
-            return $result[0]['prenom_client'] . " " . $result[0]['nom_client'];
+            $stmt = $conn->prepare("SELECT * FROM client WHERE client_id = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $clients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $clients;
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
         }
     }
+    return array();
 }
+function get_allclients()
+{
+    $db= dbConnect();
+    try
+    {
+        $request = 'SELECT * FROM client';
+        $statement = $db->prepare($request);
+        $statement->execute();
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch (PDOException $exception)
+    {
+        error_log('Erreur de requête : ' . $exception->getMessage());
+        return false;
+    }
+    
+    return $result;
+}
+
 function getNomByEmailClient($email){
     $conn = dbConnect();
     if ($conn) {
@@ -39,26 +60,6 @@ function getPrenomByEmailClient($email){
         }
     }
 }
-function get_allclients()
-{
-    $db= dbConnect();
-    try
-    {
-        $request = 'SELECT * FROM client';
-        $statement = $db->prepare($request);
-        $statement->execute();
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-    }
-    catch (PDOException $exception)
-    {
-        error_log('Erreur de requête : ' . $exception->getMessage());
-        return false;
-    }
-    
-    return $result;
-}
-
-
 
 function getClientId($email){
     $conn = dbConnect();
@@ -132,103 +133,3 @@ function getPasswordByEmail_Hash_Client($email) {
     }
     return null;
 }
-function profileUtilisateur1($email_client,$email_medecin){
-    if(isset($email_medecin)){
-        $nometprenom = getNomPrenomMedecin($email_medecin);
-    }
-    else if(isset($email_client)){
-        $nometprenom = getNomPrenomClient($email_client);
-    }
-    else{
-        $nometprenom = "Invité";
-    }
-    echo "<style>
-        #profile {
-            margin-left: 200px;
-        }
-        #vert {
-            width: 15px;
-            height: 15px;
-            background-color: green;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        #rouge {
-            width: 15px;
-            height: 15px;
-            background-color: red;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        a{
-            text-decoration: none;
-        }
-    </style>";
-
-    
-    if(isset($_SESSION['email_medecin'])){
-        echo '<a href="home_log_medecin.php"><h5> ' . $nometprenom . '</a> <a href="logout.php"><div id="vert" ></div></a></h5>';
-    }
-    if(isset($_SESSION['email_client'])){
-        echo '<a href="home_log_client.php"><h5> ' . $nometprenom . '</a> <a href="logout.php"><div id="vert" ></div></a></h5>';
-    }
-    if(!isset($_SESSION['email_medecin']) && !isset($_SESSION['email_client'])){
-        echo  ' <a href="logout.php"><div id="rouge" ></div></a>';
-    }
-    
-}
-function profileUtilisateur2($email_client,$email_medecin){
-    if(isset($email_medecin)){
-        $nometprenom = getNomPrenomMedecin($email_medecin);
-    }
-    else if(isset($email_client)){
-        $nometprenom = getNomPrenomClient($email_client);
-    }
-    else{
-        $nometprenom = "Invité";
-    }
-    echo "<style>
-        #profile {
-            margin-right: 50px;
-        }
-        #vert {
-            width: 15px;
-            height: 15px;
-            background-color: green;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        #rouge {
-            width: 15px;
-            height: 15px;
-            background-color: red;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        a{
-            text-decoration: none;
-        }
-    </style>";
-
-    
-    if(isset($_SESSION['email_medecin'])){
-        echo '<a href="home_log_medecin.php"><h5> ' . $nometprenom . '</a> <a href="logout.php"><div id="vert" ></div></a></h5>';
-    }
-    if(isset($_SESSION['email_client'])){
-        echo '<a href="home_log_client.php"><h5> ' . $nometprenom . '</a> <a href="logout.php"><div id="vert" ></div></a></h5>';
-    }
-    if(!isset($_SESSION['email_medecin']) && !isset($_SESSION['email_client'])){
-        echo  ' <a href="logout.php"><div id="rouge" ></div></a>';
-    }
-    
-}
-
-function getInfoConnexion($email,$password){
-    $logininfo = json_encode(array(
-        "email" => $email,
-        "mot_de_passe" => $password
-    ));
-    return $logininfo;
-
-}
-?>

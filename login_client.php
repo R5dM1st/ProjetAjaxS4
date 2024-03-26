@@ -7,13 +7,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include 'database.php';
     $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
     if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
-        $infoconnexion = getInfoConnexion($email,$password);
         $nom = getNomByEmailClient($email);
         $prenom = getPrenomByEmailClient($email);
         $_SESSION['prenom'] = $prenom;
         $_SESSION['nom'] = $nom;
         $_SESSION['email'] = $email;
         $_SESSION['profile'] = 1;
+        $_SESSION['id'] = getClientId($email);
     } else {
         $messageErreur = "Identifiants incorrects. Veuillez réessayer.";
     }
@@ -69,6 +69,7 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
             sessionStorage.setItem('nom', <?php echo json_encode($_SESSION['nom']); ?>);
             sessionStorage.setItem('email', <?php echo json_encode($_SESSION['email']); ?>);
             sessionStorage.setItem('profile', <?php echo json_encode($_SESSION['profile']); ?>);
+            sessionStorage.setItem('id', <?php echo json_encode($_SESSION['id']); ?>);
             window.location.replace("index.html");
             session_destroy();
             

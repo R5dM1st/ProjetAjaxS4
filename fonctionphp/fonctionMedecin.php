@@ -1,16 +1,25 @@
 <?php
-function getNomPrenomMedecin($email){
+function get_medecinById($id){
     $conn = dbConnect();
     if ($conn) {
         try {
-            $result = $conn->query("SELECT nom_medecin, prenom_medecin FROM medecin WHERE mail_medecin = '$email'");
-            $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result = $result->fetchAll();
-            return $result[0]['prenom_medecin'] . " " . $result[0]['nom_medecin'];
+            $stmt = $conn->prepare("SELECT * FROM medecin WHERE id_medecin = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($result) {
+                return $result;
+            } else {
+                return null;
+            }
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
+            return null;
         }
     }
+    return null;
 }
 function getNomByEmailMedecin($email){
     $conn = dbConnect();

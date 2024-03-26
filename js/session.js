@@ -24,7 +24,7 @@ function profileUtilisateur() {
             flex-grow: 1;
             display: flex;
             justify-content: center;
-            padding-left: 150px;
+     
         }
         
     `;
