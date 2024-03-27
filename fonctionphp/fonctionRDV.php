@@ -28,7 +28,33 @@ function get_rdvByIdClient($id) {
             INNER JOIN client ON rdv.id_client = client.client_id 
             INNER JOIN medecin ON rdv.id_medecin = medecin.id_medecin 
             INNER JOIN heuredisponible ON rdv.id_heure = heuredisponible.id_heure
-            WHERE id_client = :id");
+            WHERE rdv.id_client = :id");
+
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $rdvs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $rdvs;
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+    } else {
+        echo 'ERREUR';
+    }
+}
+function get_rdvByIdMedecin($id) {
+    $conn = dbConnect();
+
+    if ($conn) {
+        try {
+            $stmt = $conn->prepare("SELECT * 
+            FROM rdv 
+            INNER JOIN client ON rdv.id_client = client.client_id 
+            INNER JOIN medecin ON rdv.id_medecin = medecin.id_medecin 
+            INNER JOIN heuredisponible ON rdv.id_heure = heuredisponible.id_heure
+            WHERE rdv.id_medecin = :id");
+
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
 

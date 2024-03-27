@@ -24,6 +24,8 @@ function profileUtilisateur() {
             flex-grow: 1;
             display: flex;
             justify-content: center;
+            align-items: center;
+            margin-left: 100px;
      
         }
         

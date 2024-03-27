@@ -7,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include 'database.php';
     $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
     if ($hashedPasswordFromDatabase !== null && password_verify($password, $hashedPasswordFromDatabase)) {
-        $infoconnexion = getInfoConnexion($email,$password);
         $nom = getNomByEmailMedecin($email);
         $prenom = getPrenomByEmailMedecin($email);
         $_SESSION['prenom'] = $prenom;

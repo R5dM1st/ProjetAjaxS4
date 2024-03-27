@@ -143,19 +143,25 @@ function afficheSpecialité(){
         echo '<option value="' . $specialite['specialite_medecin'] . '">' . $specialite['specialite_medecin'] . '</option>';
     }
 }
-function findAllville(){
+function findAllville() {
     $conn = dbConnect();
     if ($conn) {
         try {
             $result = $conn->query("SELECT DISTINCT ville_cabinet FROM medecin");
             $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result = $result->fetchAll();
-            return $result;
+            $villes = $result->fetchAll();
+            return $villes;
         } catch (PDOException $e) {
-            echo 'Error : ' . $e->getMessage();
+            // Retourner false en cas d'erreur
+            return false;
         }
+    } else {
+        // Retourner false si la connexion échoue
+        return false;
     }
 }
+
+
 function findAllType(){
     $conn = dbConnect();
     if ($conn) {
