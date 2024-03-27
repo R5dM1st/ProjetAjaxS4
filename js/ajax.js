@@ -30,6 +30,7 @@ function displayMedecin(response) {
           Spécialité: ${medecin.specialite_medecin}
         </p>`;
         medecinInfo.appendChild(clientDiv);
+        
     }
   });
 }
@@ -233,7 +234,7 @@ function displayFindRdv() {
     </style>
     <div class="container">
         <h4 class="card-title text-center">Prendre un rendez-vous</h4>
-        <form>
+        <form id="find_rdv_form">
             <div class="form-group">
                 <label for="ville">Ville du RDV</label>
                 <select class="form-control" id="ville" name="ville">
@@ -253,14 +254,92 @@ function displayFindRdv() {
                     <option value="0">Choisir un type de rendez-vous</option>
                     <!-- Options de type de rendez-vous -->
                 </select>
-                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <button id="find_search" type="button" class="btn btn-primary">Rechercher</button>
             </div>
         </form>
     </div>`;
 
   findRdv.appendChild(rdvDiv);
+
+  
+  document.getElementById('find_search').addEventListener('click', function(event) {
+    event.preventDefault();
+    currentTitle = 'Mes Informations';
+    var ville = $('#ville').val();
+    var specialite = $('#specialite').val();
+    var typeRDV = $('#typeRDV').val();
+
+    console.log(ville, specialite, typeRDV);
+
+    ajaxRequest('GET', './request.php/medecin?' + 'ville=' + encodeURIComponent(ville) + '&specialite=' + encodeURIComponent(specialite) + '&type=' + encodeURIComponent(typeRDV), displayAfficheMedecin);
+
+  });
 }
 
+
+function displayAfficheMedecin(response) {
+  try {
+    var medecins = JSON.parse(response);
+    var medecinInfo = document.getElementById('info');
+    medecinInfo.innerHTML = '';
+
+    medecins.forEach(function (medecin) {
+      var clientDiv = document.createElement('div');
+      clientDiv.classList.add('card');
+      clientDiv.innerHTML = `<style>
+      .card{
+          margin: 0 auto;
+          width: 400px;
+          background-color: white;
+          margin-top: 50px;
+          margin-bottom: 50px;
+          text-align: center;
+      }
+      .card-title {
+          margin-top: 20px;
+      }
+      .card-text {
+          margin-top: 20px;
+      }
+      .btn {
+          margin-top: 20px;
+          margin-bottom: 20px;
+      }
+      h1{
+          text-align: center;
+          padding: 50px;
+          color: white;
+      }
+      img{
+          width: 100px;
+          height: 100px;
+      }
+
+  </style>
+        <div class="card-body">
+          <img src="image/docteurPessi.png" alt="image" class="card-image">
+          <h5 class="card-title">${medecin.prenom_medecin} ${medecin.nom_medecin}</h5>
+          <p class="card-text">${medecin.specialite_medecin}</p>
+          <p class="card-text">Téléphone: 0${medecin.telephone_cabinet}</p>
+          <p class="card-text">${medecin.mail_medecin}</p>
+          <p class="card-text">${medecin.adresse_cabinet}</p>
+          <p class="card-text">${medecin.ville_cabinet}</p>
+          <p class="card-text">${medecin.code_postal_cabinet}</p>
+          <form method="post" action="selecte_heure.php">
+            <input type="hidden" name="id_medecin" value="${medecin.id_medecin}">
+            <button type="submit" class="btn btn-primary">Prendre rendez-vous</button>
+          </form>
+        </div>
+      `;
+      medecinInfo.appendChild(clientDiv);
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'analyse de la réponse JSON : ", error);
+    var errorMessage = document.createElement('p');
+    errorMessage.textContent = "Erreur lors de la récupération des données. Veuillez réessayer plus tard.";
+    document.getElementById('info').appendChild(errorMessage);
+  }
+}
 
 
 
@@ -283,6 +362,15 @@ if (typeProfile === '1') {
     ajaxRequest('GET', './request.php/client/' + id, displayClient);
     console.log('caca');
   });
+  $('#find_rdv_form').on('submit', function(e) {
+    e.preventDefault();
+
+    
+   
+});
+
+
+
 
 } else if (typeProfile === '2') {
   $('#add_rdv_button').on('click', () => {

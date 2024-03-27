@@ -30,7 +30,7 @@ if (sessionStorage.getItem('profile') == '1' || sessionStorage.getItem('profile'
     var rdv = document.getElementById('rdv');
     rdv.innerHTML = `
         <button id="show_rdv_button" class="btn btn-primary">Mes Rendez-vous</button>
-        <button id="find_rdv_button" class="btn btn-primary">Trouver <br>un Rendez-vous</button>`;
+        <button id="find_rdv_button" class="btn btn-primary">Trouver <br>un<br> Rendez-vous</button>`;
 }
 
 if (sessionStorage.getItem('profile') == '2') {

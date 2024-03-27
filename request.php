@@ -2,19 +2,20 @@
 
 require('database.php');
 
-// Inclure d'autres classes si nécessaire
-
-session_start();
-
-// Connexion à la base de données.
-
-
 
 $request_method = $_SERVER["REQUEST_METHOD"];
 $request = substr($_SERVER['PATH_INFO'], 1);
 $request = explode('/', $request);
 
 $requestRessource = array_shift($request);
+$request_uri = $_SERVER['REQUEST_URI'];
+
+$params = parse_url($request_uri, PHP_URL_QUERY);
+parse_str($params, $query_params);
+
+$ville = $query_params['ville'] ?? '';
+$specialite = $query_params['specialite'] ?? '';
+$type = $query_params['type'] ?? '';
 
 $data = false;
 $id = array_shift($request);
@@ -43,7 +44,10 @@ switch ($requestRessource) {
         case 'medecin':
             switch ($request_method) {
                 case 'GET':
-                    if ($id!=NULL) {
+                    if($ville != '' && $specialite != '' && $type != '') {
+                        $data = medecinselect($ville, $specialite, $type);
+                    }
+                    else if ($id!=NULL) {
                         $data = get_medecinById($id);
                     } else {
                         $data = get_allmedecin();

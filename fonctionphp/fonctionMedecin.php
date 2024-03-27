@@ -240,19 +240,30 @@ function getPasswordByEmail_Hash_Medecin($email){
     }
     return null;
 }
-function medecinselect($ville, $specialité,$type){
+function medecinselect($ville, $specialite, $type){
     $conn = dbConnect();
     if ($conn) {
         try {
-            $result = $conn->query("SELECT * FROM medecin WHERE ville_cabinet = '$ville' AND specialite_medecin = '$specialité' AND id_type_demande = (SELECT id_type_demande FROM TypeDemande WHERE nom_type_demande = '$type')");
-            $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result = $result->fetchAll();
+            
+            $sql = "SELECT * FROM medecin where ville_cabinet = :ville and specialite_medecin = :specialite and id_type_demande = :type_demande";
+    
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':ville', $ville);
+            $stmt->bindParam(':specialite', $specialite);
+            $stmt->bindParam(':type_demande', $type);
+            $stmt->execute(); 
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
             return $result;
         } catch (PDOException $e) {
+            
             echo 'Error : ' . $e->getMessage();
+            return false; 
         }
     }
 }
+
+
 function afficherMedecinsDispo($ville,$specialité,$type) {
     $medecinsDispo = medecinselect($ville, $specialité,$type);
 
