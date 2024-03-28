@@ -38,9 +38,21 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
             margin-top: 50px;
             text-align: center;
         }
+        .retour{
+            width: 100px;
+            margin 0 auto;
+            background-color: 	#1E90FF;
+            border-radius: 2px;
+        }
+        #texteretour{
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <div class="retour">
+        <a class="dropdown-item" id="texteretour" href="index.html">Retour</a>
+    </div>
     <header></header>
     <div class="dropdown">
         <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" method="post">
