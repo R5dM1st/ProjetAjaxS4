@@ -115,6 +115,8 @@
                         else{
                             insertMedecin($nom, $prenom, $telephone, $mail, $mot_de_passe, $adresse, $ville, $codePostal, $specialite, $type);
                             echo "<p style='color:green;'>Votre compte a bien été créé !</p>";
+
+                            echo "<script>window.location.href = 'login_medecin.php';</script>";
                             exit();
                         }
                         
