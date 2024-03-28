@@ -426,20 +426,30 @@ function displayNewRdv() {
         </div>
         <label for="heure">Préférez-vous choisir une journée standard ?</label>
         <div class="form-group">
-        <button type="submit" class="btn btn-info" id="btn_heure">Rechercher</button>
+        <input type="hidden" id="date" value="${date}">
+        <button type="button" class="btn btn-info" id="btn_standard">Journée Standard</button>
         </div>
       </form>
       </div>`;
+      $('#btn_standard').on('click', function() {
+        var date = document.getElementById('date').value;
+        console.log(date);
+        ajaxRequest('POST', './request.php/heure?medecin=1&date=22-22-22', displayNewRdv);
+        
+      });
+  });
+
+
+
+  $('#heureForm').on('submit', function(event) {
+    event.preventDefault();
+    console.log($date);
   });
   
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
 }
 
-function processRdv() {
-  var date = document.getElementById('date').value;
-  var heure = document.getElementById('heure').value;
-}
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -463,15 +473,6 @@ if (typeProfile === '1') {
     ajaxRequest('GET', './request.php/client/' + id, displayClient);
     console.log('caca');
   });
-  $('#find_rdv_form').on('submit', function(e) {
-    e.preventDefault();
-
-    
-   
-});
-
-
-
 
 } else if (typeProfile === '2') {
   $('#add_rdv_button').on('click', () => {
