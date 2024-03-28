@@ -9,36 +9,19 @@ function ajaxRequest(method, url, callback) {
   };
   xhr.send();
 }
-
 const typeProfile = sessionStorage.getItem('profile');
 const email = sessionStorage.getItem('email');
 const id = sessionStorage.getItem('id');
 console.log(typeProfile);
 
-function displayMedecin(response) {
-  var medecins = JSON.parse(response);
-  var medecinInfo = document.getElementById('info');
-  medecinInfo.innerHTML = '';
-  medecins.forEach(function (medecin) {
-    if (medecin.mail_medecin === email) {
-      var clientDiv = document.createElement('div');
-      clientDiv.innerHTML = `
-        <p style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
-          Nom: ${medecin.nom_medecin}<br>
-          Prénom: ${medecin.prenom_medecin}<br>
-          Téléphone: 0${medecin.telephone_cabinet}<br>
-          Spécialité: ${medecin.specialite_medecin}
-        </p>`;
-        medecinInfo.appendChild(clientDiv);
-        
-    }
-  });
-}
-
 function transformDate(date) {
   const dateArray = date.split('-');
   return `${dateArray[2]}-${dateArray[1]}-${dateArray[0]}`;
 }
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------PARTIE CLIENT-----------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 function displayClient(response) {
 
   var clients = JSON.parse(response);
@@ -97,80 +80,14 @@ else{
           </table>`;
       rdvInfo.appendChild(rdvDiv);
   });}
+  var printDiv = document.getElementById('print');
+  printDiv.innerHTML = '';
 
 }
-function displayRdvShowMedecin(response) {
-  var rdvInfo = document.getElementById('info');
-  rdvInfo.innerHTML = '';
 
-  var rdvs = JSON.parse(response);
-  if (rdvs.length === 0) {
-    var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `<p>Vous n'avez pas de rendez-vous</p>`;
-    rdvInfo.appendChild(rdvDiv);
-  }
-  else{
-    rdvs.forEach(function(rdv) {
-        var rdvDiv = document.createElement('div');
-        rdvDiv.innerHTML = `<style>
-            p {
-                padding: 30px;
-            };
-            </style>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Heure</th>
-                        <th scope="col">Client</th>
-                        <th scope="col">Spécialité</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><p>${transformDate(rdv.date_dispo)}</p></td>
-                        <td><p>${rdv.heure_dispo}</p></td>
-                        <td><p>${rdv.nom_client}</p></td>
-                        <td><button class="btn btn-danger">Supprimer</button></td>
-                    </tr>
-                </tbody>
-            </table>`;
-        rdvInfo.appendChild(rdvDiv);
-    });}
-}
 
-function displayNewRdv() {
-  var findRdv = document.getElementById('info');
-  findRdv.innerHTML = '';
 
-  var rdvDiv = document.createElement('div');
-  rdvDiv.innerHTML = `
-    <style>
-      .container {
-        padding: 30px;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-  </style>
-    <div class="container">
-      <form>
-        <div class="form-group">
-          <label for="date">Date:</label>
-          <input type="date" class="form-control" id="date">
-        </div>
-        <div class="form-group">
-          <label for="heure">Heure:</label>
-          <input type="time" class="form-control" id="heure">
-        </div>
-        <div class="form-group">
-        <button type="submit" class="btn btn-primary">Rechercher</button>
-        </div>
-      </form>
-    </div>`;
 
-  findRdv.appendChild(rdvDiv);
-}
 
 function afficheVille(response) {
   var villes = JSON.parse(response);
@@ -231,6 +148,13 @@ function displayFindRdv() {
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .form_submit {
+        text-align: center;
+      }
     </style>
     <div class="container">
         <h4 class="card-title text-center">Prendre un rendez-vous</h4>
@@ -254,7 +178,10 @@ function displayFindRdv() {
                     <option value="0">Choisir un type de rendez-vous</option>
                     <!-- Options de type de rendez-vous -->
                 </select>
-                <button id="find_search" type="button" class="btn btn-primary">Rechercher</button>
+                
+            </div>
+            <div class="form_submit">
+                <button type="submit" id="find_search" class="btn btn-primary">Rechercher</button>
             </div>
         </form>
     </div>`;
@@ -280,17 +207,38 @@ function displayFindRdv() {
 function displayAfficheMedecin(response) {
   try {
     var medecins = JSON.parse(response);
-    var medecinInfo = document.getElementById('info');
+    var medecinInfo = document.getElementById('print');
     medecinInfo.innerHTML = '';
-
+    if(medecins.length === 0){
+      var errorMessage = document.createElement('p');
+      errorMessage.innerHTML = `<style>
+      .alert{
+          width: 400px;
+          margin: 0 auto;
+          margin-top: 50px;
+          margin-bottom: 50px;
+          text-align: center;
+      }
+      
+      </style>
+      <div class="alert alert-danger" role="alert">
+      Aucun médecin trouvé pour cette recherche
+      </div>`;
+      document.getElementById('print').appendChild(errorMessage);
+    }
+    else{
     medecins.forEach(function (medecin) {
       var clientDiv = document.createElement('div');
       clientDiv.classList.add('card');
       clientDiv.innerHTML = `<style>
+      #print{
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+      }
       .card{
           margin: 0 auto;
           width: 400px;
-          background-color: white;
           margin-top: 50px;
           margin-bottom: 50px;
           text-align: center;
@@ -313,26 +261,31 @@ function displayAfficheMedecin(response) {
       img{
           width: 100px;
           height: 100px;
+          border-radius: 50%;
       }
 
   </style>
-        <div class="card-body">
-          <img src="image/docteurPessi.png" alt="image" class="card-image">
-          <h5 class="card-title">${medecin.prenom_medecin} ${medecin.nom_medecin}</h5>
-          <p class="card-text">${medecin.specialite_medecin}</p>
-          <p class="card-text">Téléphone: 0${medecin.telephone_cabinet}</p>
-          <p class="card-text">${medecin.mail_medecin}</p>
-          <p class="card-text">${medecin.adresse_cabinet}</p>
-          <p class="card-text">${medecin.ville_cabinet}</p>
-          <p class="card-text">${medecin.code_postal_cabinet}</p>
-          <form method="post" action="selecte_heure.php">
-            <input type="hidden" name="id_medecin" value="${medecin.id_medecin}">
-            <button type="submit" class="btn btn-primary">Prendre rendez-vous</button>
-          </form>
-        </div>
+
+    <div class="card-body">
+      <img src="image/docteurPessi.png" alt="image" class="card-image">
+      <h5 class="card-title">${medecin.prenom_medecin} ${medecin.nom_medecin}</h5>
+      <p class="card-text">${medecin.specialite_medecin}</p>
+      <p class="card-text">Téléphone: 0${medecin.telephone_cabinet}</p>
+      <p class="card-text">${medecin.mail_medecin}</p>
+      <p class="card-text">${medecin.adresse_cabinet}</p>
+      <p class="card-text">${medecin.ville_cabinet}</p>
+      <p class="card-text">${medecin.code_postal_cabinet}</p>
+      <form method="post" action="selecte_heure.php">
+        <input type="hidden" name="id_medecin" value="${medecin.id_medecin}">
+        <button type="submit" class="btn btn-primary">Prendre rendez-vous</button>
+      </form>
+    </div>
+
       `;
+
       medecinInfo.appendChild(clientDiv);
     });
+  }
   } catch (error) {
     console.error("Erreur lors de l'analyse de la réponse JSON : ", error);
     var errorMessage = document.createElement('p');
@@ -342,8 +295,156 @@ function displayAfficheMedecin(response) {
 }
 
 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------PARTIE MEDECIN-----------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+function displayMedecin(response) {
+  var medecins = JSON.parse(response);
+  var medecinInfo = document.getElementById('info');
+  medecinInfo.innerHTML = '';
+  medecins.forEach(function (medecin) {
+    if (medecin.mail_medecin === email) {
+      var clientDiv = document.createElement('div');
+      clientDiv.innerHTML = `
+        <p style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
+          Nom: ${medecin.nom_medecin}<br>
+          Prénom: ${medecin.prenom_medecin}<br>
+          Téléphone: 0${medecin.telephone_cabinet}<br>
+          Spécialité: ${medecin.specialite_medecin}
+        </p>`;
+        medecinInfo.appendChild(clientDiv);
+        
+    }
+  });
+}
+
+function displayRdvShowMedecin(response) {
+  var rdvInfo = document.getElementById('info');
+  rdvInfo.innerHTML = '';
+
+  var rdvs = JSON.parse(response);
+  if (rdvs.length === 0) {
+    var rdvDiv = document.createElement('div');
+    rdvDiv.innerHTML = `<p>Vous n'avez pas de rendez-vous</p>`;
+    rdvInfo.appendChild(rdvDiv);
+  }
+  else{
+    rdvs.forEach(function(rdv) {
+        var rdvDiv = document.createElement('div');
+        rdvDiv.innerHTML = `<style>
+            p {
+                padding: 30px;
+            };
+            </style>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Heure</th>
+                        <th scope="col">Client</th>
+                        <th scope="col">Spécialité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><p>${transformDate(rdv.date_dispo)}</p></td>
+                        <td><p>${rdv.heure_dispo}</p></td>
+                        <td><p>${rdv.nom_client}</p></td>
+                        <td><button class="btn btn-danger">Supprimer</button></td>
+                    </tr>
+                </tbody>
+            </table>`;
+        rdvInfo.appendChild(rdvDiv);
+    });}
+    var printDiv = document.getElementById('print');
+    printDiv.innerHTML = '';
+}
 
 
+function displayNewRdv() {
+  var findRdv = document.getElementById('info');
+  findRdv.innerHTML = '';
+  
+  var rdvDiv = document.createElement('div');
+  rdvDiv.innerHTML = `
+    <style>
+      .container {
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+    </style>
+    <div class="container">
+      <form id="rdvForm">
+        <div class="form-group">
+          <label for="date">Date:</label>
+          <input type="date" class="form-control" id="date">
+        </div>
+        <div class="form-group">
+          <button type="button" class="btn btn-info" id="btn_date">Rechercher</button>
+        </div>
+      </form>
+    </div>`;
+
+  findRdv.appendChild(rdvDiv);
+  
+  $('#btn_date').on('click', function() {
+    var date = document.getElementById('date').value;
+    console.log(date);
+
+    rdvDiv.innerHTML = `
+      <style>
+      .container {
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+      .form-group {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .from_submit {
+        text-align: center;
+      }
+      label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      </style>
+      <div class="container">
+      <form id="heureForm">
+        <div class="form-group">
+        <label for="heure">Heure:</label>
+        <input type="time" class="form-control" id="heure">
+        </div>
+        <div class="form-group">
+        <button type="submit" class="btn btn-info" id="btn_heure">Rechercher</button>
+        </div>
+        <label for="heure">Préférez-vous choisir une journée standard ?</label>
+        <div class="form-group">
+        <button type="submit" class="btn btn-info" id="btn_heure">Rechercher</button>
+        </div>
+      </form>
+      </div>`;
+  });
+  
+  var printDiv = document.getElementById('print');
+  printDiv.innerHTML = '';
+}
+
+function processRdv() {
+  var date = document.getElementById('date').value;
+  var heure = document.getElementById('heure').value;
+}
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------PARTIE COMMUNE-----------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 if (typeProfile === '1') {
   $('#find_rdv_button').on('click', () => {
