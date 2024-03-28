@@ -87,7 +87,7 @@
             } else {
                 insertClient($nom, $prenom, $telephone, $mail, $mot_de_passe);
                 echo "<p style='color:green;'>Votre compte a bien été créé !</p>";
-                header('Location: log_client.php');
+                echo "<script>window.location.href = 'login_client.php';</script>";
                 exit();
                 
             }
