@@ -149,7 +149,6 @@ function displayFindRdv() {
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       }
       .form-group {
-        margin-bottom: 20px;
         text-align: center;
       }
       .form_submit {
@@ -176,7 +175,6 @@ function displayFindRdv() {
                 <label for="typeRDV">Type de rendez-vous</label>
                 <select class="form-control" id="typeRDV" name="type">
                     <option value="0">Choisir un type de rendez-vous</option>
-                    <!-- Options de type de rendez-vous -->
                 </select>
                 
             </div>
@@ -215,8 +213,6 @@ function displayAfficheMedecin(response) {
       .alert{
           width: 400px;
           margin: 0 auto;
-          margin-top: 50px;
-          margin-bottom: 50px;
           text-align: center;
       }
       
@@ -258,7 +254,7 @@ function displayAfficheMedecin(response) {
           padding: 50px;
           color: white;
       }
-      img{
+      .card-image{
           width: 100px;
           height: 100px;
           border-radius: 50%;
@@ -434,7 +430,8 @@ function displayNewRdv() {
       $('#btn_standard').on('click', function() {
         var date = document.getElementById('date').value;
         console.log(date);
-        ajaxRequest('POST', './request.php/heure?medecin=1&date=22-22-22', displayNewRdv);
+        console.log(id);
+        ajaxRequest('POST', './request.php/rdv_medecin?id_ref='+encodeURIComponent(id)+'&date='+encodeURIComponent(date), true);
         
       });
   });

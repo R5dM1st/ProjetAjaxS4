@@ -12,14 +12,11 @@ if (sessionStorage.getItem('profile') == '1' || sessionStorage.getItem('profile'
             align-items: center;
 
         }
-        button {
-            margin: 20px;
-        }
         #info {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 100px;
+            padding: 10px;
         }
 
 
@@ -50,7 +47,7 @@ if (sessionStorage.getItem('profile') == '2') {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding: 100px;
+                padding: 10px;
             }
 
 

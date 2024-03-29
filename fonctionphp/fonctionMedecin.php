@@ -21,6 +21,19 @@ function get_medecinById($id){
     }
     return null;
 }
+function getIdByEmailMedecin($email){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $result = $conn->query("SELECT id_medecin FROM medecin WHERE mail_medecin = '$email'");
+            $result->setFetchMode(PDO::FETCH_ASSOC);
+            $result = $result->fetchAll();
+            return $result[0]['id_medecin'];
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+        }
+    }
+}
 function getNomByEmailMedecin($email){
     $conn = dbConnect();
     if ($conn) {
