@@ -53,6 +53,4 @@ INSERT INTO typedemande (nom_type_demande) VALUES
     ('Visite à domicile');
 
 
--- selecte ce medecin ('Cardiologue', 'Nom', 'Prénom', 'a@example.com', '1', 'Adresse', 'azerty', '44', '0123456789', 1); avec seulement la ville la spécialité et l'id de la demande
-SELECT * FROM medecin where ville_cabinet = 'azerty' and specialite_medecin = 'Cardiologue' and id_type_demande = 1
 
