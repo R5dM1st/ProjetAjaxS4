@@ -86,53 +86,6 @@ function displayRdvShowClient(response) {
 
 
 
-
-
-
-function afficheVille(response) {
-  var villes = JSON.parse(response);
-  var optionsHtml = '';
-  optionsHtml += '<option value="0">Choisir une ville</option>';
-  for (var i = 0; i < villes.length; i++) {
-    if (villes[i].ville_cabinet !== undefined) {
-      
-      optionsHtml += '<option value="' + villes[i].ville_cabinet + '">' + villes[i].ville_cabinet + '</option>';
-    }
-  }
-  return optionsHtml;
-}
-function afficheSpecialite(response) {
-  var specialites = JSON.parse(response);
-  var optionsHtml = '';
-  optionsHtml += '<option value="0">Choisir une spécialité</option>';
-  for (var i = 0; i < specialites.length; i++) {
-    if (specialites[i].specialite_medecin !== undefined) {
-      optionsHtml += '<option value="' + specialites[i].specialite_medecin + '">' + specialites[i].specialite_medecin + '</option>';
-    }
-  }
-  return optionsHtml;
-}
-function afficheTypesDemande(response) {
-  var typesDemande = JSON.parse(response);
-  var optionsHtml = '';
-  optionsHtml += '<option value="0">Choisir un type de rendez-vous</option>';
-  for (var i = 0; i < typesDemande.length; i++) {
-    optionsHtml += '<option value="' + typesDemande[i].id_type_demande + '">' + typesDemande[i].nom_type_demande + '</option>';
-  }
-  return optionsHtml;
-}
-function affichedate(response) {
-  var dates = JSON.parse(response);
-  var optionsHtml = '';
-  optionsHtml += '<option value="0">Choisir une date de rendez-vous</option>';
-  for (var i = 0; i < dates.length; i++) {
-    var date=transformDate(dates[i].date_dispo);
-    optionsHtml += '<option value="' + dates[i].date_dispo + '">' + date + '</option>';
-  }
-  return optionsHtml;
-}
-
-
 function displayFindRdv() {
   ajaxRequest('GET', './request.php/ville', function(response) {
     var villeSelect = document.getElementById('ville');
@@ -306,54 +259,61 @@ function displayerCommande(id_medecin) {
   var findRdv = document.getElementById('info');
   findRdv.innerHTML = '';
 
+  ajaxRequest('GET', './request.php/heure?id_medecin='+id_medecin, function(response) {
+    var dateSelect = document.getElementById('dateRDV');
+    dateSelect.innerHTML = affichedate(response);
+  });
+
+  var rdvDiv = document.createElement('div');
+  rdvDiv.innerHTML = `
+    <style>
+      .container {
+        padding: 30px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+      }
+    </style>
+    <div class="container">
+      <form id="rdvForm">
+        <div class="form-group">
+          <label for="date">Date:</label>
+          <select class="form-control" id="dateRDV" name="date">
+            <option value="0">Choisir une date de rendez-vous</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-info" id="btn_date">Rechercher</button>
+      </form>
+    </div>`;
+  findRdv.appendChild(rdvDiv);
+  $('#btn_date').on('click', () => {
+    var date = document.getElementById('dateRDV').value;
+    console.log(date);
+
+  });
+  var printDiv = document.getElementById('print');
+  printDiv.innerHTML = '';
 }
 
 
 
-// function displayHeure() {
-//     ajaxRequest('GET', './request.php/heure?medecin_id='+id, function(response) {
-//      var dateRDVSelect = document.getElementById('dateRDV');
-//      dateRDVSelect.innerHTML = afficheTypesDemande(response);
-//    });
+function displayHeure() {
+  ajaxRequest('GET', './request.php/heure', function(response) {
+    var heureSelect = document.getElementById('heure');
+    heureSelect.innerHTML = afficheHeure(response);
+  
+  });
+  var findRdv = document.getElementById('info');
+  findRdv.innerHTML = '';
+  
 
-//    var findRdv = document.getElementById('info');
-
-//    var rdvDiv = document.createElement('div');
-//    rdvDiv.innerHTML = `
-//      <style>
-//        .container {
-//          padding: 30px;
-//          background-color: #f9f9f9;
-//          border-radius: 5px;
-//          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-//        }
-//        .form-group {
-//          text-align: center;
-//        }
-//        .form_submit {
-//          text-align: center;
-//        }
-//      </style>
-//      <div class="container">
-//          <h4 class="card-title text-center">Prendre un rendez-vous</h4>
-//              <div class="form-group">
-//                  <label for="typeRDV">Choisir une heure de rendez-vous</label>
-//                  <select class="form-control" id="heureRDV" name="type">
-//                  </select>              
-//              </div>
-//              <div class="form_submit">
-//                  <button type="submit" id="find_heure_search" class="btn btn-primary">Rechercher</button>
-//              </div>
-//          </form>
-//      </div>`;
-
-//    findRdv.appendChild(rdvDiv);
-//  }
+}
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------PARTIE MEDECIN-----------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 function displayMedecin(response) {
   var medecins = JSON.parse(response);
   var medecinInfo = document.getElementById('info');
@@ -381,7 +341,18 @@ function displayRdvShowMedecin(response) {
   var rdvs = JSON.parse(response);
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `<p>Vous n'avez pas de rendez-vous</p>`;
+    rdvDiv.innerHTML = `
+    <style>
+    p {
+        padding: 30px;
+        background-color: #f9f9f9; 
+        border-radius: 5px; 
+        padding: 10px; 
+        margin-bottom: 10px; 
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    };
+    </style>
+    <p>Vous n'avez pas de rendez-vous</p>`;
     rdvInfo.appendChild(rdvDiv);
   }
   else{
@@ -452,8 +423,11 @@ function displayNewRdv() {
 
   findRdv.appendChild(rdvDiv);
 
-  // Utilisation des délégués d'événements
-  findRdv.addEventListener('click', function(event) {
+
+  findRdv.removeEventListener('click', rdvClickListener);
+
+
+  function rdvClickListener(event) {
     if (event.target && event.target.id === 'btn_date') {
       var date = document.getElementById('date').value;
       console.log(date);
@@ -501,11 +475,15 @@ function displayNewRdv() {
       console.log(id);
       ajaxRequest('POST', './request.php/heure?id_ref=' + encodeURIComponent(id) + '&date=' + encodeURIComponent(date));
     }
-  });
+  }
+
+  findRdv.addEventListener('click', rdvClickListener);
   
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
 }
+
+
 
 
 
