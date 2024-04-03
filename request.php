@@ -16,8 +16,9 @@ parse_str($params, $query_params);
 $ville = $query_params['ville'] ?? '';
 $specialite = $query_params['specialite'] ?? '';
 $type = $query_params['type'] ?? '';
-$medecin = $query_params['medecin'] ?? '';
+$id_ref = $query_params['id_ref'] ?? '';
 $date = $query_params['date'] ?? '';
+$id_medecin = $query_params['id_medecin'] ?? '';
 
 $data = false;
 $id = array_shift($request);
@@ -69,6 +70,7 @@ switch ($requestRessource) {
                         }
                         break;
                     default:
+                        // Requête invalide
                         header("HTTP/1.0 405 Method Not Allowed");
                         break;
                 }
@@ -91,12 +93,18 @@ switch ($requestRessource) {
                 case 'heure':
                     switch ($request_method) {
                         case 'GET':
+                            if($id_medecin!=""){
+
+                                $data = getDateDisponible($id_medecin);
+                            }
+                            if($id_medecin!=""&&$date!=""){
+                                $data = getHeuresDisponible($id_medecin, $date);
+                            }
+                            break;
 
                         default:
                         case 'POST':
-                            if($medecin =!'' && $date=!''){
-                                insertDateJournéeClassique($medecin, $date);
-                            }
+                                insertDateJournéeClassique($id_ref, $date);
                             header("HTTP/1.0 405 Method Not Allowed");
                             break;
                     }

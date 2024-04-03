@@ -41,7 +41,7 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
         }
         .retour{
             width: 100px;
-            margin 0 auto;
+            margin: 0 auto;
             background-color: 	#1E90FF;
             border-radius: 2px;
         }

@@ -16,7 +16,7 @@ if (sessionStorage.getItem('profile') == '1' || sessionStorage.getItem('profile'
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 10px;
+            padding: 30px;
         }
 
 
@@ -47,7 +47,7 @@ if (sessionStorage.getItem('profile') == '2') {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding: 10px;
+                padding: 30px;
             }
 
 

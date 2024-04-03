@@ -70,27 +70,18 @@ function getDateDisponible($id_medecin){
     $conn = dbConnect();
     if ($conn) {
         try {
-            $stmt = $conn->prepare("SELECT date_dispo FROM heuredisponible WHERE id_medecin = :id_medecin");
+            $stmt = $conn->prepare("SELECT DISTINCT date_dispo FROM heuredisponible WHERE id_medecin = :id_medecin ORDER BY date_dispo ASC");
             $stmt->bindParam(':id_medecin', $id_medecin, PDO::PARAM_INT);
             $stmt->execute();
 
-            $rdvs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $dates = array();
-            foreach ($rdvs as $rdv) {
-                $date = $rdv['date_dispo'];
-                if (!in_array($date, $dates)) {
-                    array_push($dates, $date);
-                }
-            }
-
+            $dates = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $dates;
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
         }
     }
-
-    return array();
 }
+
 function afficheHeureDispo($id_medecin, $date_dispo){
     $heures_dispo = getHeuresDisponible($id_medecin, $date_dispo);
     if($heures_dispo == null){

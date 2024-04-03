@@ -1,31 +1,53 @@
---le mot de passe pour tout le monde est "123" pour que ce soit plus simple
+-- Table client
+CREATE TABLE client (
+    client_id SERIAL PRIMARY KEY NOT NULL,
+    nom_client character varying(100) NOT NULL,
+    prenom_client character varying(100) NOT NULL,
+    telephone_client integer NOT NULL,
+    mail_client character varying(100) NOT NULL,
+    mot_de_passe_client character varying(100) NOT NULL
+);
 
+-- Table typedemande
+CREATE TABLE typedemande (
+    id_type_demande SERIAL PRIMARY KEY NOT NULL,
+    nom_type_demande character varying(100) NOT NULL
+);
 
--- Insertion de clients
-INSERT INTO client (nom_client, prenom_client, telephone_client, mail_client, mot_de_passe_client)
-VALUES
-    ('Doe', 'John', 123456789, 'john.doe@email.com', '$2y$12$GNMISDtdQrsPAEIz7wm2YO9p8jrf3ySU0dzpzIMRKIphAhpz4GVzK'),
-    ('Smith', 'Jane', 987654321, 'jane.smith@email.com', '$2y$12$GNMISDtdQrsPAEIz7wm2YO9p8jrf3ySU0dzpzIMRKIphAhpz4GVzK'),
-    ('Brown', 'Robert', 555555555, 'robert.brown@email.com', '$2y$12$GNMISDtdQrsPAEIz7wm2YO9p8jrf3ySU0dzpzIMRKIphAhpz4GVzK');
+-- Insertion de données dans la table typedemande
+INSERT INTO typedemande (nom_type_demande) VALUES
+    ('Consultation'),
+    ('Urgence'),
+    ('Visite à domicile');
 
+-- Table medecin
+CREATE TABLE medecin (
+    id_medecin SERIAL PRIMARY KEY NOT NULL,
+    specialite_medecin character varying(100) NOT NULL,
+    nom_medecin character varying(100) NOT NULL,
+    prenom_medecin character varying(100) NOT NULL,
+    mail_medecin character varying(100) NOT NULL,
+    mdp_medecin character varying(100) NOT NULL,
+    adresse_cabinet character varying(100) NOT NULL,
+    ville_cabinet character varying(100) NOT NULL,
+    code_postal_cabinet integer NOT NULL,
+    telephone_cabinet integer NOT NULL,
+    id_type_demande INT REFERENCES typedemande(id_type_demande)
+);
 
--- Insertion de médecins
-INSERT INTO medecin (
-    specialite_medecin, nom_medecin, prenom_medecin, mail_medecin, mdp_medecin,
-    adresse_cabinet, ville_cabinet, code_postal_cabinet, telephone_cabinet, id_type_demande)
-VALUES
-    ('Cardiologue', 'Dupont', 'Pierre', 'pierre.dupont@email.com', '$2y$12$GNMISDtdQrsPAEIz7wm2YO9p8jrf3ySU0dzpzIMRKIphAhpz4GVzK','123 Rue du Cabinet', 'Paris', 75000, 123456789, 1),
-    ('Dermatologue', 'Martin', 'Sophie', 'sophie.martin@email.com', '$2y$12$GNMISDtdQrsPAEIz7wm2YO9p8jrf3ySU0dzpzIMRKIphAhpz4GVzK','456 Avenue du Cabinet', 'Lyon', 69000, 987654321, 2);
+-- Table heuredisponible
+CREATE TABLE heuredisponible (
+    id_heure SERIAL PRIMARY KEY NOT NULL,
+    id_medecin integer REFERENCES medecin(id_medecin),
+    date_dispo date NOT NULL,
+    heure_dispo time without time zone NOT NULL,
+    dispo boolean
+);
 
--- Insertion d'heures disponibles
-INSERT INTO heuredisponible (id_medecin, date_dispo, heure_dispo, dispo)
-VALUES
-    (1, '2024-01-15', '09:00:00', true),
-    (1, '2024-01-15', '10:30:00', true),
-    (2, '2024-01-16', '14:00:00', true);
-
--- Insertion de rendez-vous
-INSERT INTO rdv (id_medecin, id_client, id_heure)
-VALUES
-    (1, 1, 1),
-    (2, 2, 3);
+-- Table rdv
+CREATE TABLE rdv (
+    id_rdv SERIAL PRIMARY KEY NOT NULL,
+    id_medecin integer REFERENCES medecin(id_medecin),
+    id_client integer REFERENCES client(client_id),
+    id_heure integer REFERENCES heuredisponible(id_heure)
+);
