@@ -424,10 +424,18 @@ function displayNewRdv() {
   rdvDiv.innerHTML = `
     <style>
       .container {
+        display: flex;
+        justify-content: center; /* Pour centrer horizontalement */
+        align-items: center;
         padding: 30px;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         background-color: #f9f9f9;
+      }
+      #btn_date{
+
+        transform: translate(10%, 0);
+        
       }
     </style>
     <div class="container">
@@ -520,12 +528,12 @@ if (typeProfile === '1') {
   $('#all_button').on('click', () => {
     currentTitle = 'Mes Informations';
     ajaxRequest('GET', './request.php/client/' + id, displayClient);
-    console.log('caca');
+    console.log('Mes informations');
   });
   $('#find_date_search').on('click', () => {
     currentTitle = 'Mes Informations';
     displayHeure();
-    console.log('popo');
+    console.log('Mes informations');
   });
 
 } else if (typeProfile === '2') {

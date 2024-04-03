@@ -18,6 +18,11 @@ if (sessionStorage.getItem('profile') == '1') {
             align-items: center;
             padding: 30px;
         }
+        #all_button {
+            margin-top: 20px; /* Décalage de 10 pixels vers le bas */
+            margin-left:20px;
+          }
+
 
 
            
