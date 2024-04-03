@@ -44,6 +44,7 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
             margin 0 auto;
             background-color: 	#1E90FF;
             border-radius: 2px;
+
         }
         #texteretour{
             color: white;

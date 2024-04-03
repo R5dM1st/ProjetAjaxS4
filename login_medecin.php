@@ -40,21 +40,26 @@ if (isset($_SESSION['prenom']) && isset($_SESSION['nom'])) {
             text-align: center;
         }
         .retour{
+            display: flex;
+            justify-content: left;
             width: 100px;
-            margin: 0 auto;
             background-color: 	#1E90FF;
             border-radius: 2px;
+            
+            text-align: left;
         }
         #texteretour{
-            color: white;
+            align-self: flex-start;
+            text-decoration: white;
         }
+        
     </style>
 </head>
-<body>
+
+    <body>
     <div class="retour">
-        <a class="dropdown-item" id="texteretour" href="index.html">Retour</a>
+    <a class="dropdown-item" id="texteretour" href="index.html">Retour</a>
     </div>
-    <header></header>
     <div class="dropdown">
         <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" method="post">
             <h2>Connectez-vous</h2>
