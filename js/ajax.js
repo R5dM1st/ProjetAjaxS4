@@ -34,7 +34,8 @@ function displayClient(response) {
         <p>
           Nom: ${client.nom_client}<br>
           Prénom: ${client.prenom_client}<br>
-          Téléphone: 0${client.telephone_client}
+          Téléphone: 0${client.telephone_client}<br>
+          Mail: ${client.mail_client}<br>
         </p>
       </div>`;
       clientInfo.appendChild(clientDiv);
@@ -49,40 +50,58 @@ function displayRdvShowClient(response) {
   var rdvs = JSON.parse(response);
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `<div style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
-      <p>Vous n'avez pas de rendez-vous</p>
-    </div>`;
+    rdvDiv.innerHTML = `
+    <style>
+      p {
+        padding: 30px;
+        background-color: #f9f9f9; 
+        border-radius: 5px; 
+        padding: 10px; 
+        margin-bottom: 10px; 
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+    <p>Vous n'avez pas de rendez-vous</p>`;
     rdvInfo.appendChild(rdvDiv);
   } else {
+    var rdvDiv = document.createElement('div');
+    rdvDiv.innerHTML = `<style>
+ 
+    </style>
+    <div id="rdvDiv">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Heure</th>
+            <th scope="col">Client</th>
+            <th scope="col">Spécialité</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="rdvTableBody">
+        </tbody>
+      </table>
+    </div>`;
+    rdvInfo.appendChild(rdvDiv);
+
+    var rdvTableBody = document.getElementById('rdvTableBody');
     rdvs.forEach(function(rdv) {
-      var rdvDiv = document.createElement('div');
-      rdvDiv.innerHTML = `<div>
-          <table style="border-collapse: collapse;">
-              <thead>
-                  <tr>
-                      <th scope="col">Date</th>
-                      <th scope="col">Heure</th>
-                      <th scope="col">Médecin</th>
-                      <th scope="col">Spécialité</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td>${transformDate(rdv.date_dispo)}</td>
-                      <td>${rdv.heure_dispo}</td>
-                      <td>Docteur ${rdv.nom_medecin}</td>
-                      <td>${rdv.specialite_medecin}</td>
-                      <td><button class="btn btn-danger">Reprendre</button></td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>`;
-      rdvInfo.appendChild(rdvDiv);
+      var rdvRow = document.createElement('tr');
+      rdvRow.innerHTML = `
+        <td><p>${dateComplete(rdv.date_dispo)}</p></td>
+        <td><p>${rdv.heure_dispo}</p></td>
+        <td><p>Docteur ${rdv.nom_medecin}</p></td>
+        <td><p>${rdv.specialite_medecin}</p></td>
+        <td><button id="list" class="btn btn-warning">Reprendre</button></td>`;
+      rdvTableBody.appendChild(rdvRow);
     });
   }
+
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
 }
+
 
 
 
@@ -238,6 +257,7 @@ function displayAfficheMedecin(response) {
         </div>`;
         medecinInfo.appendChild(clientDiv);
         document.querySelectorAll('#medecin_submit').forEach(button => {
+          window.scrollTo(0,document.body.scrollHeight);
           button.addEventListener('click', function (event) {
             event.preventDefault();
             id_medecin = this.parentNode.querySelector('#id_medecin').value;
@@ -257,6 +277,8 @@ function displayAfficheMedecin(response) {
 
 function displayerCommande(id_medecin) {
   var findRdv = document.getElementById('info');
+  var print = document.getElementById('print');
+  print.innerHTML = '';
   findRdv.innerHTML = '';
 
   ajaxRequest('GET', './request.php/heure?id_medecin='+id_medecin, function(response) {
@@ -289,25 +311,53 @@ function displayerCommande(id_medecin) {
   $('#btn_date').on('click', () => {
     var date = document.getElementById('dateRDV').value;
     console.log(date);
-
-  });
-  var printDiv = document.getElementById('print');
-  printDiv.innerHTML = '';
+    displayHeure(id_medecin, date);
+}
+);
 }
 
 
 
-function displayHeure() {
-  ajaxRequest('GET', './request.php/heure', function(response) {
-    var heureSelect = document.getElementById('heure');
-    heureSelect.innerHTML = afficheHeure(response);
+function displayHeure($id_medecin, $date) {
+   ajaxRequest('GET', './request.php/heure?id_medecin='+$id_medecin+'&date='+$date, function(response) {
+     var heureSelect = document.getElementById('heure');
+     heureSelect.innerHTML = afficheHeure(response);
   
-  });
-  var findRdv = document.getElementById('info');
-  findRdv.innerHTML = '';
-  
+   });
+   var findRdv = document.getElementById('info');
+   findRdv.innerHTML = '';
+   var rdvDiv = document.createElement('div');
+    rdvDiv.innerHTML = `
+      <style>
+        .container {
+          padding: 30px;
+          border-radius: 5px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+          background-color: #f9f9f9;
+        }
+      </style>
+      <div class="container">
+        <form id="heureForm">
+          <div class="form-group">
+            <label for="heure">Heure:</label>
+            <select class="form-control" id="heure" name="heure">
+              <option value="0">Choisir une heure de rendez-vous</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-info" id="btn_heure">Rechercher</button>
+        </form>
+      </div>`;
+    findRdv.appendChild(rdvDiv);
+    $('#btn_heure').on('click', function() {
+      console.log($date);
+      var heure = document.getElementById('heure').value;
+      console.log(heure);
+      ajaxRequest('POST', './request.php/rdv?id_client=' + encodeURIComponent(id) + '&id_medecin=' + encodeURIComponent($id_medecin)+ '&date=' + encodeURIComponent($date) + '&heure=' + encodeURIComponent(heure));
+    });
+   }
 
-}
+
+
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -326,7 +376,11 @@ function displayMedecin(response) {
           Nom: ${medecin.nom_medecin}<br>
           Prénom: ${medecin.prenom_medecin}<br>
           Téléphone: 0${medecin.telephone_cabinet}<br>
-          Spécialité: ${medecin.specialite_medecin}
+          Spécialité: ${medecin.specialite_medecin}<br>
+          Mail: ${medecin.mail_medecin}<br>
+          Adresse: ${medecin.adresse_cabinet}<br>
+          Ville: ${medecin.ville_cabinet}<br>
+          Code Postal: ${medecin.code_postal_cabinet}<br>
         </p>`;
         medecinInfo.appendChild(clientDiv);
         
@@ -343,49 +397,54 @@ function displayRdvShowMedecin(response) {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
     <style>
-    p {
+      p {
         padding: 30px;
         background-color: #f9f9f9; 
         border-radius: 5px; 
         padding: 10px; 
         margin-bottom: 10px; 
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    };
+      }
     </style>
     <p>Vous n'avez pas de rendez-vous</p>`;
     rdvInfo.appendChild(rdvDiv);
-  }
-  else{
+  } else {
+    var rdvDiv = document.createElement('div');
+    rdvDiv.innerHTML = `<style>
+    </style>
+    <div id="rdvDiv">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Heure</th>
+            <th scope="col">Client</th>
+            <th scope="col">Spécialité</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="rdvTableBody">
+        </tbody>
+      </table>
+    </div>`;
+    rdvInfo.appendChild(rdvDiv);
+
+    var rdvTableBody = document.getElementById('rdvTableBody');
     rdvs.forEach(function(rdv) {
-        var rdvDiv = document.createElement('div');
-        rdvDiv.innerHTML = `<style>
-            p {
-                padding: 30px;
-            };
-            </style>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Heure</th>
-                        <th scope="col">Client</th>
-                        <th scope="col">Spécialité</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><p>${transformDate(rdv.date_dispo)}</p></td>
-                        <td><p>${rdv.heure_dispo}</p></td>
-                        <td><p>${rdv.nom_client}</p></td>
-                        <td><button class="btn btn-danger">Supprimer</button></td>
-                    </tr>
-                </tbody>
-            </table>`;
-        rdvInfo.appendChild(rdvDiv);
-    });}
-    var printDiv = document.getElementById('print');
-    printDiv.innerHTML = '';
+      var rdvRow = document.createElement('tr');
+      rdvRow.innerHTML = `
+        <td><p>${dateComplete(rdv.date_dispo)}</p></td>
+        <td><p>${rdv.heure_dispo}</p></td>
+        <td><p>${rdv.nom_client}</p></td>
+        <td><button class="btn btn-danger">Supprimer</button></td>`;
+      rdvTableBody.appendChild(rdvRow);
+    });
+  }
+
+  var printDiv = document.getElementById('print');
+  printDiv.innerHTML = '';
 }
+
 
 function displayNewRdv() {
   var findRdv = document.getElementById('info');

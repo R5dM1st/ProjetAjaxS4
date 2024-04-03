@@ -64,3 +64,15 @@ function afficheVille(response) {
     }
     return optionsHtml;
   }
+  function afficheHeure(response) {
+    var heures = JSON.parse(response);
+    var optionsHtml = '';
+    optionsHtml += '<option value="0">Choisir une heure de rendez-vous</option>';
+    heures.sort();
+    
+    for (var i = 0; i < heures.length; i++) {
+        optionsHtml += '<option value="' + heures[i] + '">' + heures[i] + '</option>';
+      
+    }
+    return optionsHtml;
+}

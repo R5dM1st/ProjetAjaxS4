@@ -112,10 +112,10 @@ function prendreRendezVous($id_client, $id_medecin, $date, $heure) {
 
             }
         } catch (PDOException $e) {
-            echo 'Error: ' . $e->getMessage();
+            echo json_encode( 'Error: ' . $e->getMessage());
         }
     } else {
-        echo "<h3>Erreur de connexion à la base de données. Veuillez réessayer.</h3>";
+        echo json_encode("<h3>Erreur de connexion à la base de données. Veuillez réessayer.</h3>");
     }
 }
 

@@ -144,7 +144,7 @@ function insertDateJournéeClassique($medecin, $date){
     
     if ($conn) {
         try {
-            // Formatage de la date pour correspondre au format attendu par la base de données
+
             $formatted_date = date('Y-m-d', strtotime($date));
 
             for ($i = 8; $i < 18; $i++) {
@@ -152,11 +152,11 @@ function insertDateJournéeClassique($medecin, $date){
                 
                 $stmt = $conn->prepare("SELECT COUNT(*) FROM heuredisponible WHERE id_medecin = :medecin AND date_dispo = :date_dispo AND heure_dispo = :heure_dispo");
                 $stmt->bindParam(':medecin', $medecin, PDO::PARAM_INT);
-                $stmt->bindParam(':date_dispo', $formatted_date, PDO::PARAM_STR); // Utilisation de la date formatée
+                $stmt->bindParam(':date_dispo', $formatted_date, PDO::PARAM_STR); 
                 $stmt->bindParam(':heure_dispo', $heure, PDO::PARAM_STR);
                 $count = $stmt->fetchColumn();
                 if ($count == 0) {
-                    // Utilisation de la date formatée dans les requêtes SQL suivantes également
+                    if($i != 12){
                     $stmt = $conn->prepare("INSERT INTO heuredisponible (id_medecin, date_dispo, heure_dispo, dispo) VALUES (:medecin, :date_dispo, :heure_dispo, true)");
                     $stmt->bindParam(':medecin', $medecin, PDO::PARAM_INT);
                     $stmt->bindParam(':date_dispo', $formatted_date, PDO::PARAM_STR);
@@ -167,6 +167,7 @@ function insertDateJournéeClassique($medecin, $date){
                     $stmt->bindParam(':date_dispo', $formatted_date, PDO::PARAM_STR);
                     $stmt->bindParam(':heure_dispo', $heure, PDO::PARAM_STR);
                     $stmt->execute();
+                    }
                 }
             }
             $heure = "18:00";

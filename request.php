@@ -19,6 +19,8 @@ $type = $query_params['type'] ?? '';
 $id_ref = $query_params['id_ref'] ?? '';
 $date = $query_params['date'] ?? '';
 $id_medecin = $query_params['id_medecin'] ?? '';
+$id_client = $query_params['id_client'] ?? '';
+$heure = $query_params['heure'] ?? '';
 
 $data = false;
 $id = array_shift($request);
@@ -60,6 +62,19 @@ switch ($requestRessource) {
                     break;
             }
             break;
+            case 'rdv':
+                switch ($request_method) {
+                    case 'POST':
+                        
+                            prendreRendezVous($id_client,$id_medecin,$date,$heure);
+                            $data = "Rendez-vous pris avec succès";
+                        
+                        break;
+                    default:
+                        header("HTTP/1.0 405 Method Not Allowed");
+                        break;
+                }
+                break;
             case 'rdv_client':
                 switch ($request_method) {
                     case 'GET':
@@ -70,7 +85,6 @@ switch ($requestRessource) {
                         }
                         break;
                     default:
-                        // Requête invalide
                         header("HTTP/1.0 405 Method Not Allowed");
                         break;
                 }
