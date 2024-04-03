@@ -30,11 +30,13 @@ function displayClient(response) {
     if (client.mail_client === email) {
       var clientDiv = document.createElement('div');
       clientDiv.innerHTML = `
+      <div style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
         <p>
           Nom: ${client.nom_client}<br>
           Prénom: ${client.prenom_client}<br>
           Téléphone: 0${client.telephone_client}
-        </p>`;
+        </p>
+      </div>`;
       clientInfo.appendChild(clientDiv);
     }
   });
@@ -45,55 +47,43 @@ function displayRdvShowClient(response) {
   rdvInfo.innerHTML = '';
 
   var rdvs = JSON.parse(response);
-if (rdvs.length === 0) {
-  var rdvDiv = document.createElement('div');
-  rdvDiv.innerHTML = `<style> 
-  p {
-      background-color: #f9f9f9;
-      padding: 30px;
-  };
-  </style>
-  <p style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);>
-  Vous n'avez pas de rendez-vous</p>`;
-  rdvInfo.appendChild(rdvDiv);
-}
-else{
-  rdvs.forEach(function(rdv) {
+  if (rdvs.length === 0) {
+    var rdvDiv = document.createElement('div');
+    rdvDiv.innerHTML = `<div style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
+      <p>Vous n'avez pas de rendez-vous</p>
+    </div>`;
+    rdvInfo.appendChild(rdvDiv);
+  } else {
+    rdvs.forEach(function(rdv) {
       var rdvDiv = document.createElement('div');
-      rdvDiv.innerHTML = `<style>
-          p {
-              padding: 30px;
-          }
-          table{
-              border-collapse: collapse;
-          }
-          };
-          </style>
-          <table class="table table-striped">
+      rdvDiv.innerHTML = `<div>
+          <table style="border-collapse: collapse;">
               <thead>
                   <tr>
                       <th scope="col">Date</th>
                       <th scope="col">Heure</th>
-                      <th scope="col">Medecin</th>
+                      <th scope="col">Médecin</th>
                       <th scope="col">Spécialité</th>
                   </tr>
               </thead>
               <tbody>
                   <tr>
-                      <td><p>${transformDate(rdv.date_dispo)}</p></td>
-                      <td><p>${rdv.heure_dispo}</p></td>
-                      <td><p>Docteur ${rdv.nom_medecin}</p></td>
-                      <td><p>${rdv.specialite_medecin}</p></td>
+                      <td>${transformDate(rdv.date_dispo)}</td>
+                      <td>${rdv.heure_dispo}</td>
+                      <td>Docteur ${rdv.nom_medecin}</td>
+                      <td>${rdv.specialite_medecin}</td>
                       <td><button class="btn btn-danger">Reprendre</button></td>
                   </tr>
               </tbody>
-          </table>`;
+          </table>
+      </div>`;
       rdvInfo.appendChild(rdvDiv);
-  });}
+    });
+  }
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
-
 }
+
 
 
 
@@ -294,13 +284,14 @@ function displayAfficheMedecin(response) {
           </form>
         </div>`;
         medecinInfo.appendChild(clientDiv);
+        document.querySelectorAll('#medecin_submit').forEach(button => {
+          button.addEventListener('click', function (event) {
+            event.preventDefault();
+            id_medecin = this.parentNode.querySelector('#id_medecin').value;
+            displayerCommande(id_medecin);
+          });
       });
-      document.querySelectorAll('#medecin_submit').forEach(button => {
-        button.addEventListener('click', function (event) {
-          event.preventDefault();
-          id_medecin = this.parentNode.querySelector('#id_medecin').value;
-          displayerCommande(id_medecin);
-        });
+      
       });
     }
   } catch (error) {
@@ -312,43 +303,9 @@ function displayAfficheMedecin(response) {
 }
 
 function displayerCommande(id_medecin) {
-  // Declare findRdv before using it
   var findRdv = document.getElementById('info');
   findRdv.innerHTML = '';
 
-  ajaxRequest('GET', './request.php/heure?id_medecin='+id_medecin, function(response) {
-    var dateSelect = document.getElementById('dateRDV');
-    dateSelect.innerHTML = affichedate(response);
-  });
-
-  // Correct the assignment of id_medecin
-  // id_medecin = id; // This line seems unnecessary, you may want to remove it
-
-  var rdvDiv = document.createElement('div');
-  rdvDiv.innerHTML = `
-    <style>
-      .container {
-        padding: 30px;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        background-color: #f9f9f9;
-      }
-    </style>
-    <div class="container">
-      <form id="rdvForm">
-        <div class="form-group">
-          <label for="date">Date:</label>
-          <select class="form-control" id="dateRDV" name="date">
-            <option value="0">Choisir une date de rendez-vous</option>
-          </select>
-        </div>
-        <button type="button" class="btn btn-info" id="btn_date">Rechercher</button>
-      </form>
-    </div>`;
-  findRdv.appendChild(rdvDiv);
-
-  var printDiv = document.getElementById('print');
-  printDiv.innerHTML = '';
 }
 
 
