@@ -48,36 +48,40 @@ function displayRdvShowClient(response) {
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-    .alert{
-      width: 400px;
-      margin: 0 auto;
-      text-align: center;
-  }
-  </style>
-  <div class="alert alert-danger" role="alert">
-  Aucun rendez-vous trouvé
-  </div>`;
+      <style>
+        .alert {
+          width: 400px;
+          margin: 0 auto;
+          text-align: center;
+        }
+      </style>
+      <div class="alert alert-danger" role="alert">
+        Aucun rendez-vous trouvé
+      </div>`;
     rdvInfo.appendChild(rdvDiv);
   } else {
     var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `<style>
- 
-    </style>
-    <div id="rdvDiv">
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Heure</th>
-            <th scope="col">Client</th>
-            <th scope="col">Spécialité</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody id="rdvTableBody">
-        </tbody>
-      </table>
-    </div>`;
+    rdvDiv.innerHTML = `
+      <style></style>
+      <div id="rdvDiv">
+        <form id="rdvForm">
+          <div class="form-group">
+            <input type="text" class="form-control" id="rechercheRDV" placeholder="Recherche sur les noms et prénoms...">
+          </div>
+        </form>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Heure</th>
+              <th scope="col">Client</th>
+              <th scope="col">Spécialité</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody id="rdvTableBody"></tbody>
+        </table>
+      </div>`;
     rdvInfo.appendChild(rdvDiv);
 
     var rdvTableBody = document.getElementById('rdvTableBody');
@@ -88,19 +92,43 @@ function displayRdvShowClient(response) {
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>Docteur ${rdv.nom_medecin}</p></td>
         <td><p>${rdv.specialite_medecin}</p></td>
-        <td><button id="list" class="btn btn-warning">Reprendre</button></td>`;
+        <td><button class="btn btn-warning list" data-id="${rdv.id_medecin}">Reprendre</button></td>`;
       rdvTableBody.appendChild(rdvRow);
-      document.getElementById('list').addEventListener('click', function() {
-        var id_medecin = rdv.id_medecin;
+    });
+
+    var reprendreButtons = document.querySelectorAll('.list');
+    reprendreButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        var id_medecin = this.getAttribute('data-id');
+        console.log(id_medecin);
         displayerCommande(id_medecin);
+      });
+    });
+
+    var rechercheRDV = document.getElementById('rechercheRDV');
+    rechercheRDV.addEventListener('input', function() {
+      var filterValue = this.value.toUpperCase();
+      var rows = rdvTableBody.getElementsByTagName('tr');
+      for (var i = 0; i < rows.length; i++) {
+        var cols = rows[i].getElementsByTagName('td');
+        var display = false;
+        for (var j = 0; j < cols.length; j++) {
+          var textValue = cols[j].textContent || cols[j].innerText;
+          if (textValue.toUpperCase().indexOf(filterValue) > -1) {
+            display = true;
+            break;
+          }
+        }
+        rows[i].style.display = display ? '' : 'none';
       }
-      );
     });
   }
 
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
 }
+
+
 
 
 
@@ -447,17 +475,9 @@ function displayRdvShowMedecin(response) {
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-    <style>
-      p {
-        padding: 30px;
-        background-color: #f9f9f9; 
-        border-radius: 5px; 
-        padding: 10px; 
-        margin-bottom: 10px; 
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-    </style>
-    <p>Vous n'avez pas de rendez-vous</p>`;
+  <div class="alert alert-danger" role="alert">
+  Aucun rendez-vous trouvé
+  </div>`;
     rdvInfo.appendChild(rdvDiv);
   } else {
     var rdvDiv = document.createElement('div');
@@ -528,9 +548,7 @@ function displayNewRdv() {
         background-color: #f9f9f9;
       }
       #btn_date{
-
         transform: translate(10%, 0);
-        
       }
     </style>
     <div class="container">
@@ -546,10 +564,8 @@ function displayNewRdv() {
     </div>`;
 
   findRdv.appendChild(rdvDiv);
-
-
-  findRdv.removeEventListener('click', rdvClickListener);
-
+  var btnDate = document.getElementById('btn_date');
+  btnDate.addEventListener('click', rdvClickListener);
 
   function rdvClickListener(event) {
     if (event.target && event.target.id === 'btn_date') {
@@ -564,6 +580,9 @@ function displayNewRdv() {
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             background-color: #f9f9f9;
           }
+          label {
+            font-weight: bold;
+          }
           .form-group {
             margin-bottom: 20px;
             text-align: center;
@@ -571,14 +590,14 @@ function displayNewRdv() {
           .from_submit {
             text-align: center;
           }
-          label {
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-          }
         </style>
         <div class="container">
+        
           <form id="heureForm">
+          <div class="form-group">
+          <label for="heure">RDV pour le ${dateComplete(date)}</label>
+          <input type="hidden" id="date" value="${date}">
+        </div>
             <div class="form-group">
               <label for="heure">Heure:</label>
               <input type="time" class="form-control" id="heure">
@@ -588,26 +607,27 @@ function displayNewRdv() {
             </div>
             <label for="heure">Préférez-vous choisir une journée standard ?</label>
             <div class="form-group">
-              <input type="hidden" id="date" value="${date}">
+              
               <button type="button" class="btn btn-info" id="btn_standard">Journée Standard</button>
             </div>
           </form>
         </div>`;
-    } else if (event.target && event.target.id === 'btn_standard') {
+      findRdv.appendChild(rdvDiv);
+      $('#btn_standard').on('click', function() {
+      
       var date = document.getElementById('date').value;
       console.log(date);
       console.log(id);
       ajaxRequest('POST', './request.php/heure?id_ref=' + encodeURIComponent(id) + '&date=' + encodeURIComponent(date));
+      console.log('bas les masques');
+      });
+     
+
     }
   }
-
-  findRdv.addEventListener('click', function(event) {
-    event.preventDefault();
-  });
-  
-  var printDiv = document.getElementById('print');
-  printDiv.innerHTML = '';
 }
+
+
 
 
 
