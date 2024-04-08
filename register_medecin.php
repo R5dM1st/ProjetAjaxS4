@@ -56,8 +56,7 @@
 
             <label for="from-postal">Code postal</label>
             <div class="form-group">   
-                <select class="form-control" name="from-postal" id="from-postal" required>
-                </select>
+                <input type="text" class="form-control" name="from-postal" id="from-postal" placeholder="Code postal" value="" required>
             </div>
             <label for="from-tel">Téléphone</label>
             <div class="form-group">   
@@ -140,21 +139,6 @@
 
        
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://vicopo.selfbuild.fr/vicopo-jquery.min.js"></script>
-    <script>
-        $(function () {
-            $('#from-ville').on('input', function () {
-                var ville = $(this).val();
-                $.ville(ville, function (input, cities) {
-                    $('#from-postal').empty();
-                    cities.forEach(function(city) {
-                        $('#from-postal').append('<option value="' + city.code + '">' + city.code + '</option>');
-                    });
-                });
-            });
-        });
-    </script>
 
 </body>
 
