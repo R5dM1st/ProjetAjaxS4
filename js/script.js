@@ -21,6 +21,10 @@ function transformdateCompete(dateString) {
     return date.getFullYear() + '-' + formattedMonth + '-' + formattedDay;
 }
 
+function transformDate(date) {
+  const dateArray = date.split('-');
+  return `${dateArray[2]} / ${dateArray[1]} / ${dateArray[0]}`;
+}
 
 function afficheVille(response) {
     var villes = JSON.parse(response);

@@ -14,10 +14,7 @@ const email = sessionStorage.getItem('email');
 const id = sessionStorage.getItem('id');
 console.log(typeProfile);
 
-function transformDate(date) {
-  const dateArray = date.split('-');
-  return `${dateArray[2]} / ${dateArray[1]} / ${dateArray[0]}`;
-}
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------PARTIE CLIENT-----------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,17 +48,15 @@ function displayRdvShowClient(response) {
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-    <style>
-      p {
-        padding: 30px;
-        background-color: #f9f9f9; 
-        border-radius: 5px; 
-        padding: 10px; 
-        margin-bottom: 10px; 
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-    </style>
-    <p>Vous n'avez pas de rendez-vous</p>`;
+    .alert{
+      width: 400px;
+      margin: 0 auto;
+      text-align: center;
+  }
+  </style>
+  <div class="alert alert-danger" role="alert">
+  Aucun rendez-vous trouvé
+  </div>`;
     rdvInfo.appendChild(rdvDiv);
   } else {
     var rdvDiv = document.createElement('div');
@@ -95,6 +90,11 @@ function displayRdvShowClient(response) {
         <td><p>${rdv.specialite_medecin}</p></td>
         <td><button id="list" class="btn btn-warning">Reprendre</button></td>`;
       rdvTableBody.appendChild(rdvRow);
+      document.getElementById('list').addEventListener('click', function() {
+        var id_medecin = rdv.id_medecin;
+        displayerCommande(id_medecin);
+      }
+      );
     });
   }
 
@@ -309,11 +309,29 @@ function displayerCommande(id_medecin) {
     </div>`;
   findRdv.appendChild(rdvDiv);
   $('#btn_date').on('click', () => {
+    var error_date = document.getElementById('print');
+    error_date.innerHTML = '';
     var date = document.getElementById('dateRDV').value;
     console.log(date);
+    if(date == '0'){
+      var errorMessage = document.createElement('p');
+      errorMessage.innerHTML = `<style>
+      .alert{
+          width: 400px;
+          margin: 0 auto;
+          text-align: center;
+      }
+      </style>
+      <div class="alert alert-danger" role="alert">
+      Aucune date sélectionnée
+      </div>`;
+      error_date.appendChild(errorMessage);
+      
+}
+if(date != '0'){
     displayHeure(id_medecin, date);
 }
-);
+  });
 }
 
 
@@ -324,6 +342,8 @@ function displayHeure($id_medecin, $date) {
      heureSelect.innerHTML = afficheHeure(response);
   
    });
+   var errorMessage = document.getElementById('print');
+    errorMessage.innerHTML = '';
    var findRdv = document.getElementById('info');
    findRdv.innerHTML = '';
    var rdvDiv = document.createElement('div');
@@ -349,15 +369,46 @@ function displayHeure($id_medecin, $date) {
       </div>`;
     findRdv.appendChild(rdvDiv);
     $('#btn_heure').on('click', function() {
+      var error_date = document.getElementById('print');
+    error_date.innerHTML = '';
       console.log($date);
       var heure = document.getElementById('heure').value;
       console.log(heure);
-      ajaxRequest('POST', './request.php/rdv?id_client=' + encodeURIComponent(id) + '&id_medecin=' + encodeURIComponent($id_medecin)+ '&date=' + encodeURIComponent($date) + '&heure=' + encodeURIComponent(heure));
-    });
+      if(heure == '0'){
+        var errorMessage = document.createElement('p');
+        errorMessage.innerHTML = `<style>
+        .alert{
+            width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        </style>
+        <div class="alert alert-danger" role="alert">
+        Aucune heure sélectionnée
+        </div>`;
+        error_date.appendChild(errorMessage);
+      }
+      if(heure!='0'){
+        ajaxRequest('POST', './request.php/rdv?id_client=' + encodeURIComponent(id) + '&id_medecin=' + encodeURIComponent($id_medecin)+ '&date=' + encodeURIComponent($date) + '&heure=' + encodeURIComponent(heure));
+        var successMessage = document.createElement('p');
+        successMessage.innerHTML = `<style>
+        .alert{
+            width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        </style>
+        <div class="alert alert-success" role="alert">
+        Rendez-vous pris avec succès
+        </div>`;
+        error_date.appendChild(successMessage);
+        setTimeout(function(){
+          document.location.href = 'index.html';
+        }, 2000);
+        
+    }
+});
    }
-
-
-
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -536,7 +587,9 @@ function displayNewRdv() {
     }
   }
 
-  findRdv.addEventListener('click', rdvClickListener);
+  findRdv.addEventListener('click', function(event) {
+    event.preventDefault();
+  });
   
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
