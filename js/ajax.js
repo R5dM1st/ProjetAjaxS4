@@ -23,19 +23,24 @@ function displayClient(response) {
   var clients = JSON.parse(response);
   var clientInfo = document.getElementById('info');
   clientInfo.innerHTML = '';
+  
   clients.forEach(function (client) {
     if (client.mail_client === email) {
-      var clientDiv = document.createElement('div');
-      clientDiv.innerHTML = `
-      <div style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
-        <p>
-          Nom: ${client.nom_client}<br>
-          Prénom: ${client.prenom_client}<br>
-          Téléphone: 0${client.telephone_client}<br>
-          Mail: ${client.mail_client}<br>
-        </p>
-      </div>`;
-      clientInfo.appendChild(clientDiv);
+      var cardDiv = document.createElement('div');
+      cardDiv.className = 'card';
+      cardDiv.style.width = '18rem';
+      
+      var cardBodyDiv = document.createElement('div');
+      cardBodyDiv.className = 'card-body';
+      
+      cardBodyDiv.innerHTML = `
+        <h5 class="card-title">${client.nom_client} ${client.prenom_client}</h5>
+        <p class="card-text">Téléphone: 0${client.telephone_client}</p>
+        <p class="card-text">Mail: ${client.mail_client}</p>
+      `;
+      
+      cardDiv.appendChild(cardBodyDiv);
+      clientInfo.appendChild(cardDiv);
     }
   });
 }
@@ -62,7 +67,6 @@ function displayRdvShowClient(response) {
   } else {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-      <style></style>
       <div id="rdvDiv">
         <form id="rdvForm">
           <div class="form-group">
@@ -447,25 +451,30 @@ function displayMedecin(response) {
   var medecins = JSON.parse(response);
   var medecinInfo = document.getElementById('info');
   medecinInfo.innerHTML = '';
+  
   medecins.forEach(function (medecin) {
     if (medecin.mail_medecin === email) {
-      var clientDiv = document.createElement('div');
-      clientDiv.innerHTML = `
-        <p style="background-color: #f9f9f9; border-radius: 5px; padding: 10px; margin-bottom: 10px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);">
-          Nom: ${medecin.nom_medecin}<br>
-          Prénom: ${medecin.prenom_medecin}<br>
-          Téléphone: 0${medecin.telephone_cabinet}<br>
-          Spécialité: ${medecin.specialite_medecin}<br>
-          Mail: ${medecin.mail_medecin}<br>
-          Adresse: ${medecin.adresse_cabinet}<br>
-          Ville: ${medecin.ville_cabinet}<br>
-          Code Postal: ${medecin.code_postal_cabinet}<br>
-        </p>`;
-        medecinInfo.appendChild(clientDiv);
-        
+      var cardDiv = document.createElement('div');
+      cardDiv.className = 'card';
+      cardDiv.style.width = '18rem';
+      
+      var cardBodyDiv = document.createElement('div');
+      cardBodyDiv.className = 'card-body';
+      
+      cardBodyDiv.innerHTML = `
+        <h5 class="card-title">Dr ${medecin.nom_medecin}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Spécialité: ${medecin.specialite_medecin}</h6>
+        <p class="card-text">Téléphone: 0${medecin.telephone_cabinet}</p>
+        <p class="card-text">Mail: ${medecin.mail_medecin}</p>
+        <p class="card-text">Adresse: ${medecin.adresse_cabinet}, ${medecin.code_postal_cabinet} ${medecin.ville_cabinet}</p>
+      `;
+      
+      cardDiv.appendChild(cardBodyDiv);
+      medecinInfo.appendChild(cardDiv);
     }
   });
 }
+
 
 function displayRdvShowMedecin(response) {
   var rdvInfo = document.getElementById('info');
@@ -475,31 +484,26 @@ function displayRdvShowMedecin(response) {
   if (rdvs.length === 0) {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-  <div class="alert alert-danger" role="alert">
-  Aucun rendez-vous trouvé
-  </div>`;
+      <div class="alert alert-danger" role="alert">
+        Aucun rendez-vous trouvé
+      </div>`;
     rdvInfo.appendChild(rdvDiv);
   } else {
     var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `<style>
-    </style>
-    <div id="rdvDiv">
-      <table class="table table-hover">
+    rdvDiv.innerHTML = `
+      <table class="table">
         <thead>
           <tr>
             <th scope="col">Date</th>
-            <th scope="col">IdRDV</th>
             <th scope="col">Heure</th>
             <th scope="col">Client</th>
             <th scope="col">Spécialité</th>
-  
             <th scope="col"></th>
           </tr>
         </thead>
         <tbody id="rdvTableBody">
         </tbody>
-      </table>
-    </div>`;
+      </table>`;
     rdvInfo.appendChild(rdvDiv);
 
     var rdvTableBody = document.getElementById('rdvTableBody');
@@ -507,24 +511,18 @@ function displayRdvShowMedecin(response) {
       var rdvRow = document.createElement('tr');
       rdvRow.innerHTML = `
         <td><p>${dateComplete(rdv.date_dispo)}</p></td>
-        <td><p>${rdv.id_rdv}</p></td>
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>${rdv.nom_client}</p></td>
-        <td><button id="btn_delete" class="btn btn-danger">Supprimer</button></td>`;
+        <td><p>${rdv.specialite}</p></td>
+        <td><button class="btn btn-danger">Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
-      $id_rdv = rdv.id_rdv
-      $id_medecin = rdv.id_medecin
-      $id_client = rdv.id_client
-      $id_heure = rdv.id_heure
-      // Add event listener to the "Supprimer" button
-      var deleteButton = rdvRow.querySelector('#btn_delete');
-      deleteButton.addEventListener('click', function() {
-        deleteRDV();
-        rdvTableBody.removeChild(rdvRow)
-      });
     });
   }
-  }
+
+  var printDiv = document.getElementById('print');
+  printDiv.innerHTML = '';
+}
+
 function deleteRDV() {
   console.log("test");
   ajaxRequest('DELETE','./request.php/delete_rdv_medecin'+'&id_rdv='+encodeURIComponent($id_rdv)+ '&id_medecin='+ encodeURIComponent($id_medecin)+'&id_client=' + encodeURIComponent($id_client)+'&id_heure=' + encodeURIComponent($id_heure))

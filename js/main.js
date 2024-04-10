@@ -12,27 +12,26 @@ if (sessionStorage.getItem('profile') == '1') {
             align-items: center;
 
         }
+        button {
+            margin: 20px;
+            background-color: #b34151;
+        }
         #info {
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 30px;
         }
-        #all_button {
-            margin-top: 20px; /* Décalage de 10 pixels vers le bas */
-            margin-left:20px;
-          }
-
 
 
            
         </style>
-        <button id="all_button" class="btn btn-primary">Mes Informations</button>`;
+        <button id="all_button" class="btn btn-light">Mes Informations</button>`;
         
     var rdv = document.getElementById('rdv');
     rdv.innerHTML = `
-        <button id="show_rdv_button" class="btn btn-primary">Mes Rendez-vous</button>
-        <button id="find_rdv_button" class="btn btn-primary">Trouver <br>un<br> Rendez-vous</button>`;
+        <button id="show_rdv_button" class="btn btn-light">Mes Rendez-vous</button>
+        <button id="find_rdv_button" class="btn btn-light">Trouver <br>un<br> Rendez-vous</button>`;
 }
 
 if (sessionStorage.getItem('profile') == '2') {
@@ -47,23 +46,24 @@ if (sessionStorage.getItem('profile') == '2') {
             }
             button {
                 margin: 20px;
+                
             }
             #info {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 padding: 30px;
+                
             }
-
 
            
         </style>
-        <button id="all_button" class="btn btn-danger">Mes Informations</button>`;
+        <button id="all_button" class="btn btn-light">Mes Informations</button>`;
         
     
     var rdv = document.getElementById('rdv');
     rdv.innerHTML = `
-        <button id="show_rdv_button" class="btn btn-danger">Mes Rendez-vous</button>
-        <button id="add_rdv_button" class="btn btn-danger">Ajouter des heures <br>de Rendez-vous</button>`;
+        <button id="show_rdv_button" class="btn btn-light">Mes Rendez-vous</button>
+        <button id="add_rdv_button" class="btn btn-light">Ajouter <br>des heures<br>de Rendez-vous</button>`;
 }
 
