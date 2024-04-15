@@ -274,9 +274,11 @@ function suppRDV($id_rdv){
             $stmt = $conn->prepare("DELETE FROM rdv WHERE id_rdv = :id_rdv");
             $stmt->bindParam(':id_rdv', $id_rdv, PDO::PARAM_INT);
             $stmt->execute();
+            $txt = "Rdv supprime";
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
         }
+        return $txt;
     }
 }
 ?>

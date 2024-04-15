@@ -1,4 +1,4 @@
-<!-- fonction de connection BDD de pierre -->
+
 <?php
     const dbuser = 'postgres';
     const db_pwd = 'Isen44N';
