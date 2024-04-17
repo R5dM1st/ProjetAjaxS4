@@ -277,7 +277,6 @@ function suppRDV($id_rdv){
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
         }
-        echo json_encode("SALUT");
     }
 }
 ?>

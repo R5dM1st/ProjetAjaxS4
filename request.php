@@ -111,7 +111,6 @@ switch ($requestRessource) {
                         case 'GET':
                             if($id_rdv !=NULL){
                                 suppRDV($id_rdv);
-                                $data = "Ok";
                             }
                             else{
                                 $data = "ça marche pas";
