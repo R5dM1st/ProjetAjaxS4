@@ -514,7 +514,7 @@ function displayRdvShowMedecin(response) {
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>${rdv.nom_client}</p></td>
         <td><p>${rdv.id_rdv}</p></td>
-        <td><button class="btn btn-danger" id="btn_delete" data-id="${rdv.id_rdv}">Supprimer</button></td>`;
+        <td><button class="btn btn-danger" id="btn_delete">Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
       var id_rdv = rdv.id_rdv
 
@@ -533,7 +533,7 @@ function displayRdvShowMedecin(response) {
 }
 
 function deleteRDV(id_rdv) {
-  ajaxRequest('DELETE','./request.php/delete_rdv_medecin/'+'&id_rdv='+encodeURIComponent(id_rdv),function(){
+  ajaxRequest('DELETE','./request.php/delete_rdv_medecin/?id_rdv='+id_rdv,function(){
     var divSup = document.createElement('div')
     divSup.innerHTML = `Rdv supprimé`
   })

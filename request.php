@@ -22,6 +22,7 @@ $id_medecin = $query_params['id_medecin'] ?? '';
 $id_client = $query_params['id_client'] ?? '';
 $heure = $query_params['heure'] ?? '';
 $id_rdv = $query_params['id_rdv'] ??'';
+
 $id_heure = $query_params['id_heure'] ??'';
 $data = false;
 $id = array_shift($request);
@@ -105,19 +106,19 @@ switch ($requestRessource) {
                             break;
                     }
                     break;
-                    case 'delete_rdv_medecin':
-                        switch($request_methode){
-                            case 'DELETE':
-                                if($id_rdv !=NULL){
-                                    //suppRDV($id_rdv);
-                                    $data = "SIUUU";
-                                }
-                                else{
-                                    $data = "ça marche pas";
-                                }
-                                break;
+                case 'delete_rdv_medecin':
+                    switch($request_method){
+                        case 'GET':
+                            if($id_rdv !=NULL){
+                                suppRDV($id_rdv);
+                                $data = "Ok";
+                            }
+                            else{
+                                $data = "ça marche pas";
+                            }
+                            break;
                         }
-                        break;
+                    break;
                 case 'heure':
                     switch ($request_method) {
                         case 'GET':
