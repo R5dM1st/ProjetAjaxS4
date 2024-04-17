@@ -534,7 +534,7 @@ function displayRdvShowMedecin(response) {
 }
 
 function deleteRDV(id_rdv) {
-  ajaxRequest('DELETE','./request.php/delete_rdv_medecin/?id_rdv='+encodeURIComponent(id_rdv),function(){
+  ajaxRequest('GET','./request.php/delete_rdv_medecin/?id_rdv='+encodeURIComponent(id_rdv),function(){
     var divSup = document.createElement('div')
     divSup.innerHTML = `Rdv supprimé`
   })
