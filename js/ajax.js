@@ -536,6 +536,23 @@ function displayRdvShowMedecin(response) {
     });
     
   }
+  var rechercheRDV = document.getElementById('rechercheRDV');
+  rechercheRDV.addEventListener('input', function() {
+    var filterValue = this.value.toUpperCase();
+    var rows = rdvTableBody.getElementsByTagName('tr');
+    for (var i = 0; i < rows.length; i++) {
+      var cols = rows[i].getElementsByTagName('td');
+      var display = false;
+      for (var j = 0; j < cols.length; j++) {
+        var textValue = cols[j].textContent || cols[j].innerText;
+        if (textValue.toUpperCase().indexOf(filterValue) > -1) {
+          display = true;
+          break;
+        }
+      }
+      rows[i].style.display = display ? '' : 'none';
+    }
+  });
 
   var printDiv = document.getElementById('print');
   printDiv.innerHTML = '';
@@ -660,7 +677,6 @@ function displayNewRdv() {
         document.location.href = 'index.html';
       }
       , 2000);
-      });
       });
       $('#btn_standard').on('click', function() {
       
