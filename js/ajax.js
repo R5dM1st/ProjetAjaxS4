@@ -514,9 +514,17 @@ function displayRdvShowMedecin(response) {
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>${rdv.nom_client}</p></td>
         <td><p>${rdv.specialite}</p></td>
-        <td><button class="btn btn-danger">Supprimer</button></td>`;
+        <td><button class="btn btn-danger" id="btn_delete">Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
+      $id_rdv = rdv.id_rdv
+      var deleteButton = rdvRow.querySelector('#btn_delete');
+      deleteButton.addEventListener('click', function() {
+        deleteRDV();
+        rdvTableBody.removeChild(rdvRow)
+      });
     });
+    // Add event listener to the "Supprimer" button
+    
   }
 
   var printDiv = document.getElementById('print');
@@ -525,9 +533,11 @@ function displayRdvShowMedecin(response) {
 
 function deleteRDV() {
   console.log("test");
-  ajaxRequest('DELETE','./request.php/delete_rdv_medecin'+'&id_rdv='+encodeURIComponent($id_rdv)+ '&id_medecin='+ encodeURIComponent($id_medecin)+'&id_client=' + encodeURIComponent($id_client)+'&id_heure=' + encodeURIComponent($id_heure))
+  ajaxRequest('DELETE','./request.php/delete_rdv_medecin'+'&id_rdv='+encodeURIComponent($id_rdv), function(){
+    var divSup = document.createElement('div')
+    divSup.innerHTML = `Rdv supprimé`
+  })//+ '&id_medecin='+ encodeURIComponent($id_medecin)+'&id_client=' + encodeURIComponent($id_client)+'&id_heure=' + encodeURIComponent($id_heure))
 }
-
 
 function displayNewRdv() {
   var findRdv = document.getElementById('info');
