@@ -517,6 +517,7 @@ function displayRdvShowMedecin(response) {
         <td><button class="btn btn-danger" id="btn_delete">Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
       var id_rdv = rdv.id_rdv
+ 
 
       var deleteButton = rdvRow.querySelector('#btn_delete');
       deleteButton.addEventListener('click', function() {
@@ -533,7 +534,7 @@ function displayRdvShowMedecin(response) {
 }
 
 function deleteRDV(id_rdv) {
-  ajaxRequest('DELETE','./request.php/delete_rdv_medecin/?id_rdv='+id_rdv,function(){
+  ajaxRequest('DELETE','./request.php/delete_rdv_medecin/?id_rdv='+encodeURIComponent(id_rdv),function(){
     var divSup = document.createElement('div')
     divSup.innerHTML = `Rdv supprimé`
   })
