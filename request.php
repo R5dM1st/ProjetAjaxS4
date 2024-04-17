@@ -108,11 +108,12 @@ switch ($requestRessource) {
                     case 'delete_rdv_medecin':
                         switch($request_methode){
                             case 'DELETE':
-                                if(isset($id_rdv) && !is_null($id_rdv)){
-                                    $data = suppRDV($id_rdv);
+                                if($id_rdv !=NULL){
+                                    //suppRDV($id_rdv);
+                                    $data = "SIUUU";
                                 }
                                 else{
-                                    $data = "Id NULL";
+                                    $data = "ça marche pas";
                                 }
                                 break;
                         }
