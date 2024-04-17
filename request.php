@@ -22,7 +22,8 @@ $id_medecin = $query_params['id_medecin'] ?? '';
 $id_client = $query_params['id_client'] ?? '';
 $heure = $query_params['heure'] ?? '';
 $id_rdv = $query_params['id_rdv'] ??'';
-
+$heure_debut = $query_params['heure_debut'] ??'';
+$heure_fin = $query_params['heure_fin'] ??'';
 $id_heure = $query_params['id_heure'] ??'';
 $data = false;
 $id = array_shift($request);
@@ -127,16 +128,29 @@ switch ($requestRessource) {
                             }
                             if($id_medecin!=""&&$date!=""){
                                 $data = getHeuresDisponible($id_medecin, $date);
+
                             }
+
                             break;
 
                         default:
                         case 'POST':
+                            if ($id_ref != "" && $date != "") {
                                 insertDateJournéeClassique($id_ref, $date);
+                                $data = "YES SIR";
+                            } elseif ($id_medecin != "" && $date != "" && $heure_debut != "" && $heure_fin != "") {
+                                insertDateJournéeSpecial($id_medecin, $date, $heure_debut, $heure_fin);
+                                $data = "YES MISS";
+                            } else {
+                                header("HTTP/1.0 400 Bad Request");
+                                $data = "Invalid data provided";
+                            }
                             header("HTTP/1.0 405 Method Not Allowed");
                             break;
-                    }
-                    break;
+                     
+                            
+                        }
+                    default:
                     case 'ville':
                         switch ($request_method) {
                             case 'GET':

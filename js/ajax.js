@@ -491,19 +491,24 @@ function displayRdvShowMedecin(response) {
   } else {
     var rdvDiv = document.createElement('div');
     rdvDiv.innerHTML = `
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Heure</th>
-            <th scope="col">Client</th>
-            <th scope="col">Spécialité</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody id="rdvTableBody">
-        </tbody>
-      </table>`;
+    <div id="rdvDiv">
+    <form id="rdvForm">
+      <div class="form-group">
+        <input type="text" class="form-control" id="rechercheRDV" placeholder="Recherche sur les noms et prénoms...">
+      </div>
+    </form>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Heure</th>
+          <th scope="col">Client</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody id="rdvTableBody"></tbody>
+    </table>
+  </div>`;
     rdvInfo.appendChild(rdvDiv);
 
     var rdvTableBody = document.getElementById('rdvTableBody');
@@ -513,19 +518,22 @@ function displayRdvShowMedecin(response) {
         <td><p>${dateComplete(rdv.date_dispo)}</p></td>
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>${rdv.nom_client}</p></td>
-        <td><p>${rdv.id_rdv}</p></td>
-        <td><button class="btn btn-danger" id="btn_delete">Supprimer</button></td>`;
+        <td><button class="btn btn-danger" id="btn_delete" data-id="${rdv.id_rdv}" >Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
       var id_rdv = rdv.id_rdv
- 
-
+      var reprendreButtons = document.querySelectorAll('#btn_delete');
+      reprendreButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          var id_rdv = this.getAttribute('data-id');
+          console.log(id_rdv);
+        });
+      });
       var deleteButton = rdvRow.querySelector('#btn_delete');
       deleteButton.addEventListener('click', function() {
         deleteRDV(id_rdv);
         rdvTableBody.removeChild(rdvRow)
       });
     });
-    // Add event listener to the "Supprimer" button
     
   }
 
@@ -609,8 +617,10 @@ function displayNewRdv() {
           <input type="hidden" id="date" value="${date}">
         </div>
             <div class="form-group">
-              <label for="heure">Heure:</label>
-              <input type="time" class="form-control" id="heure">
+              <label for="heure">Heure debut:</label>
+              <input type="time" class="form-control" id="heure_debut" min="8:00" max="19:00" required >
+              <label for="heure">Heure fin:</label>
+              <input type="time" class="form-control" id="heure_fin" min="8:00" max="19:00" required >
             </div>
             <div class="form-group">
               <button type="submit" class="btn btn-info" id="btn_heure">Rechercher</button>
@@ -624,12 +634,58 @@ function displayNewRdv() {
         </div>`;
       findRdv.appendChild(rdvDiv);
       $('#btn_standard').on('click', function() {
+        var date = document.getElementById('date').value;
+        var id = sessionStorage.getItem('id');
+        var heure_debut = document.getElementById('heure_debut').value;
+        var heure_fin = document.getElementById('heure_fin').value;
+        console.log(date);
+        console.log(id);
+        console.log(heure_debut);
+        console.log(heure_fin);
+        ajaxRequest('POST', './request.php/heure?id_medecin=' + encodeURIComponent(id) + '&date=' + encodeURIComponent(date) + '&heure_debut=' + encodeURIComponent(heure_debut) + '&heure_fin=' + encodeURIComponent(heure_fin));
+        var successMessage = document.createElement('p');
+      successMessage.innerHTML = `<style>
+      .alert{
+          width: 400px;
+          margin: 0 auto;
+          margin-top: 20px;
+          text-align: center;
+      }
+      </style>
+      <div class="alert alert-success" role="alert">
+      Journée standard prise 
+      </div>`;
+      findRdv.appendChild(successMessage);
+      setTimeout(function(){
+        document.location.href = 'index.html';
+      }
+      , 2000);
+      });
+      });
+      $('#btn_standard').on('click', function() {
       
       var date = document.getElementById('date').value;
       console.log(date);
       console.log(id);
       ajaxRequest('POST', './request.php/heure?id_ref=' + encodeURIComponent(id) + '&date=' + encodeURIComponent(date));
       console.log('bas les masques');
+      var successMessage = document.createElement('p');
+      successMessage.innerHTML = `<style>
+      .alert{
+          width: 400px;
+          margin: 0 auto;
+          margin-top: 20px;
+          text-align: center;
+      }
+      </style>
+      <div class="alert alert-success" role="alert">
+      Journée standard prise 
+      </div>`;
+      findRdv.appendChild(successMessage);
+      setTimeout(function(){
+        document.location.href = 'index.html';
+      }
+      , 2000);
       });
      
 
