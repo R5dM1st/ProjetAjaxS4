@@ -12,7 +12,13 @@ $request_uri = $_SERVER['REQUEST_URI'];
 
 $params = parse_url($request_uri, PHP_URL_QUERY);
 parse_str($params, $query_params);
-
+$nom = $query_params['nom'] ?? '';
+$prenom = $query_params['prenom'] ?? '';
+$tel = $query_params['tel'] ?? '';
+$email = $query_params['mail'] ?? '';
+$email_confirm = $query_params['mail_confirm'] ?? '';
+$mdp = $query_params['mdp'] ?? '';
+$mdp_confirm = $query_params['mdp_confirm'] ?? '';
 $ville = $query_params['ville'] ?? '';
 $specialite = $query_params['specialite'] ?? '';
 $type = $query_params['type'] ?? '';
@@ -47,7 +53,58 @@ switch ($requestRessource) {
                 header("HTTP/1.0 405 Method Not Allowed");
                 break;
         }
-        break;
+        case 'log_client':
+            switch ($request_method) {
+                case 'GET':
+                    if ($email != '' && $mdp != '') { 
+                        $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
+                        if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
+                            $data = array('prenom' => getPrenomByEmailClient($email), 'nom' => getNomByEmailClient($email), 'email' => $email, 'profile' => 1, 'id' => getClientId($email));
+                        } else {
+                            $data = false;
+                        }
+                    }
+                    break;
+                case 'POST':
+                    if($email != '' && $mdp != '' && $nom != '' && $prenom != '' && $tel != '' && $email_confirm != '' && $mdp_confirm != ''){
+                        $email_existe = emailExisteClient($email);
+                        if ($email !== $email_confirm) {
+                            $data = json_encode("Les adresses email ne correspondent pas");
+                        } elseif ($mdp !== $mdp_confirm) {
+                            $data = json_encode("Les mots de passe ne correspondent pas");
+                        } elseif ($email_existe === true) {
+                            $data = json_encode("L'adresse email existe déjà");
+                        } else {
+                            insertClient($nom, $prenom, $tel, $email, $mdp);
+                            $data = "Client ajouté avec succès";
+                        }
+                    } else {
+                        $data = json_encode("Tous les champs doivent être remplis");
+                    }
+                    exit;
+                    
+            }
+            break;
+            
+            
+            
+        case 'log_medecin':
+            switch ($request_method) {
+                case 'GET':
+                    if ($email != '' && $mdp != '') { 
+                        $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
+                        if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
+                            $data = array('prenom' => getPrenomByEmailMedecin($email), 'nom' => getNomByEmailMedecin($email), 'email' => $email, 'profile' => 2, 'id' => getMedecinId($email));
+                        } else {
+                            $data = false;
+                        }
+                    }
+                    break;
+                default:
+                    header("HTTP/1.0 405 Method Not Allowed");
+                    break;
+            }
+            break;
         case 'medecin':
             switch ($request_method) {
                 case 'GET':
@@ -135,22 +192,29 @@ switch ($requestRessource) {
 
                         default:
                         case 'POST':
-                            if ($id_ref != "" && $date != "") {
+                            if($id_ref!=""){
                                 insertDateJournéeClassique($id_ref, $date);
-                                $data = "YES SIR";
-                            } elseif ($id_medecin != "" && $date != "" && $heure_debut != "" && $heure_fin != "") {
-                                insertDateJournéeSpecial($id_medecin, $date, $heure_debut, $heure_fin);
-                                $data = "YES MISS";
-                            } else {
-                                header("HTTP/1.0 400 Bad Request");
-                                $data = "Invalid data provided";
                             }
-                            header("HTTP/1.0 405 Method Not Allowed");
-                            break;
-                     
-                            
+                                header("HTTP/1.0 405 Method Not Allowed");
+                                break;
                         }
-                    default:
+              
+                 
+                        header("HTTP/1.0 405 Method Not Allowed");
+                        break;
+                    case 'heure_special':
+                        switch ($request_method) {
+                            case 'POST':
+                                if($id_ref!=""&&$date!=""&&$heure_debut!=""&&$heure_fin!=""){
+                                        insertDateJournéeSpecial($id_ref, $date, $heure_debut, $heure_fin);
+
+                                }
+                                break;
+                            default:
+                                header("HTTP/1.0 405 Method Not Allowed");
+                                break;
+                        }
+                        break;
                     case 'ville':
                         switch ($request_method) {
                             case 'GET':
@@ -187,6 +251,7 @@ switch ($requestRessource) {
                     break;
                     
     }
+
     header('Content-Type: application/json');
     echo json_encode($data);
 exit;

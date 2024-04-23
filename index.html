@@ -18,7 +18,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" style="max-width: 50px; max-height: 50px;">
+            <a class="navbar-brand" style="max-width: 50px; max-height: 50px;" href="index.html">
                 <img src="image/logov2.ico" alt="image" style="width: 100%; height: auto;">
             </a>
             <a class="navbar-brand">EPHealth</a>
@@ -26,18 +26,31 @@
                 <div id="profile" class="navbar-nav mr-2"></div>
                 <div id="circleContainer"></div>
             </div>
-            <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="login_medecin.php">Êtes-vous médecin ?</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="login_client.php">Connexion</a>
-                </li>
-            </ul>
+            <div id="nav_button">
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link"  id="log_medecin">Êtes-vous médecin ?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="log_client">Connexion</a>
+                    </li>
+                </ul>
+        </div>
         </nav> 
         
-        
-        
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="log"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+            
     </header>
     <main class="container text-center-main my-4 text-center" id="main">
         <h2>Bienvenue sur notre site de prise de rendez-vous EPHealth</h2>
@@ -51,6 +64,7 @@
 
     <div id="info"></div>
     <div id="print"></div>
+    <script src="js/login&register.js"></script>
     <script src="js/script.js"></script>
     <script src="js/session.js"></script>
     <script src="js/main.js"></script>

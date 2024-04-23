@@ -21,3 +21,66 @@ main{
       color:#fff;
     }
     
+    .modal {
+        background-color: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        border-radius: 5px;
+        padding: 20px;
+        max-width: 400px;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .modal-close {
+        cursor: pointer;
+        font-size: 18px;
+        color: #999;
+    }
+
+    .modal-body {
+        margin-bottom: 20px;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .modal-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #41B3A3;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .modal-button:hover {
+        background-color: #338e7a;
+    }
+
+    .modal-button + .modal-button {
+        margin-left: 10px;
+    }

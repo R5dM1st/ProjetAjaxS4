@@ -181,13 +181,14 @@ function findAllType(){
         try {
             $result = $conn->query("SELECT * FROM typedemande");
             $result->setFetchMode(PDO::FETCH_ASSOC);
-            $result = $result->fetchAll();
-            return $result;
+            $types = $result->fetchAll();
+            return $types;
         } catch (PDOException $e) {
             echo 'Error : ' . $e->getMessage();
         }
     }
 }
+
 function afficheType(){
     $types = findAllType();
     foreach ($types as $type) {
@@ -210,6 +211,7 @@ function insertMedecin($nom, $prenom, $telephone, $mail, $mot_de_passe, $adresse
     if ($type == "Visite à domicile") {
         $type = 3;
     }
+    $specialite = strtolower($specialite);
     $hashed_pwd = hashPassword($mot_de_passe);
     $conn = dbConnect();
     if ($conn) {

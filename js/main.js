@@ -1,6 +1,11 @@
 if (sessionStorage.getItem('profile') == '1' || sessionStorage.getItem('profile') == '2') {
     document.getElementById('main').remove();
+
 }
+
+
+
+
 
 if (sessionStorage.getItem('profile') == '1') {
     var all_info = document.getElementById('all_info');
