@@ -183,7 +183,6 @@ function displayFindRdv() {
                 <label for="specialite">Spécialité</label>
                 <select class="form-control" id="specialite" name="specialite">
                     <option value="0">Choisir une spécialité</option>
-                    <!-- Options de spécialité -->
                 </select>
             </div>
             <div class="form-group">
@@ -192,6 +191,10 @@ function displayFindRdv() {
                     <option value="0">Choisir un type de rendez-vous</option>
                 </select>
                 
+            </div>
+            <div class="form-group">
+                <label for="nom">Nom du Docteur:</label>
+                <input type="text" class="form-control" id="nom" name="nom">
             </div>
             <div class="form_submit">
                 <button type="submit" id="find_search" class="btn btn-primary">Rechercher</button>
@@ -204,7 +207,6 @@ function displayFindRdv() {
   
   document.getElementById('find_search').addEventListener('click', function(event) {
     event.preventDefault();
-    currentTitle = 'Mes Informations';
     var ville = $('#ville').val();
     var specialite = $('#specialite').val();
     var typeRDV = $('#typeRDV').val();
@@ -313,9 +315,9 @@ function displayerCommande(id_medecin) {
   print.innerHTML = '';
   findRdv.innerHTML = '';
 
-  ajaxRequest('GET', './request.php/heure?id_medecin='+id_medecin, function(response) {
+  ajaxRequest('GET', './request.php/date?id_medecin='+id_medecin, function(response) {
     var dateSelect = document.getElementById('dateRDV');
-    dateSelect.innerHTML = affichedate(response);
+    dateSelect.innerHTML = affichedate(response); 
   });
 
   var rdvDiv = document.createElement('div');
@@ -327,24 +329,27 @@ function displayerCommande(id_medecin) {
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         background-color: #f9f9f9;
       }
+      form{
+        text-align: center;
+      }
     </style>
     <div class="container">
       <form id="rdvForm">
         <div class="form-group">
           <label for="date">Date:</label>
           <select class="form-control" id="dateRDV" name="date">
-            <option value="0">Choisir une date de rendez-vous</option>
+          <option value="0">Choisir une date de rendez-vous</option>
           </select>
         </div>
         <button type="button" class="btn btn-info" id="btn_date">Rechercher</button>
       </form>
     </div>`;
   findRdv.appendChild(rdvDiv);
+
   $('#btn_date').on('click', () => {
     var error_date = document.getElementById('print');
     error_date.innerHTML = '';
     var date = document.getElementById('dateRDV').value;
-    console.log(date);
     if(date == '0'){
       var errorMessage = document.createElement('p');
       errorMessage.innerHTML = `<style>
@@ -353,18 +358,18 @@ function displayerCommande(id_medecin) {
           margin: 0 auto;
           text-align: center;
       }
+      
       </style>
       <div class="alert alert-danger" role="alert">
       Aucune date sélectionnée
       </div>`;
       error_date.appendChild(errorMessage);
-      
-}
-if(date != '0'){
-    displayHeure(id_medecin, date);
-}
+    } else {
+      displayHeure(id_medecin, date);
+    }
   });
 }
+
 
 
 
@@ -387,11 +392,15 @@ function displayHeure($id_medecin, $date) {
           box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
           background-color: #f9f9f9;
         }
+        form{
+          text-align: center;
+        }
       </style>
       <div class="container">
         <form id="heureForm">
+        <h4>Vous avez choisit la date du</h4><br><h3>${dateComplete($date)}</h3>
           <div class="form-group">
-            <label for="heure">Heure:</label>
+            <label for="heure">Maintenant choisissez une heure:</label>
             <select class="form-control" id="heure" name="heure">
               <option value="0">Choisir une heure de rendez-vous</option>
             </select>
@@ -707,11 +716,13 @@ function displayNewRdv() {
 
 
 
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------PARTIE COMMUNE-----------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 if (typeProfile === '1') {
+
   $('#find_rdv_button').on('click', () => {
     currentTitle = 'Trouver un Rendez-vous';
     displayFindRdv();

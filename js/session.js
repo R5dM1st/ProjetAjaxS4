@@ -1,4 +1,5 @@
 function profileUtilisateur() {
+    
     const profile = document.getElementById('profile');
     const circleContainer = document.getElementById('circleContainer');
 
@@ -37,6 +38,14 @@ function profileUtilisateur() {
     
 
     if (prenom && nom) {
+        const info = document.createElement('div');
+        info.id='info_user';
+        if(sessionStorage.getItem('profile') == '1'){
+            info.innerHTML='<i class="fas fa-user"></i>';
+        } else {
+            info.innerHTML='<i class="fas fa-user-md"></i><p></p>';
+        }
+        profile.appendChild(info);
         const userInfo = document.createElement('div');
         userInfo.innerHTML = `<h5>${prenom} ${nom}</h5>`;
         profile.appendChild(userInfo);
@@ -44,7 +53,7 @@ function profileUtilisateur() {
         const greenCircle = document.createElement('div');
         greenCircle.id = 'vert';
         circleContainer.appendChild(greenCircle);
-
+        
         greenCircle.addEventListener('click', () => {
             sessionStorage.clear();
             location.reload(); 

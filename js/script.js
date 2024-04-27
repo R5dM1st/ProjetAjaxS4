@@ -60,14 +60,23 @@ function afficheVille(response) {
   }
   function affichedate(response) {
     var dates = JSON.parse(response);
-    var optionsHtml = '';
-    optionsHtml += '<option value="0">Choisir une date de rendez-vous</option>';
+    var optionsHtml = '<option value="0">Choisir une date de rendez-vous</option>';
+    
     for (var i = 0; i < dates.length; i++) {
-      var date=dateComplete((dates[i].date_dispo));
-      optionsHtml += '<option value="' + dates[i].date_dispo + '">' + date + '</option>';
+      // Assurez-vous que la propriété date_dispo est définie pour l'élément
+      if (dates[i].date_dispo !== undefined) {
+        optionsHtml += '<option value="' + dates[i].date_dispo + '">' + dates[i].date_dispo + '</option>';
+      } else {
+        console.log("La propriété date_dispo n'est pas définie pour l'élément ", dates[i]);
+      }
     }
+    
     return optionsHtml;
   }
+  
+  
+  
+  
   function afficheHeure(response) {
     var heures = JSON.parse(response);
     var optionsHtml = '';

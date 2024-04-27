@@ -2,7 +2,6 @@
 
 require('database.php');
 
-
 $request_method = $_SERVER["REQUEST_METHOD"];
 $request = substr($_SERVER['PATH_INFO'], 1);
 $request = explode('/', $request);
@@ -53,21 +52,65 @@ switch ($requestRessource) {
                 header("HTTP/1.0 405 Method Not Allowed");
                 break;
         }
-        case 'log_client':
-            switch ($request_method) {
-                case 'GET':
-                    if ($email != '' && $mdp != '') { 
-                        $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
-                        if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
-                            $data = array('prenom' => getPrenomByEmailClient($email), 'nom' => getNomByEmailClient($email), 'email' => $email, 'profile' => 1, 'id' => getClientId($email));
-                        } else {
-                            $data = false;
-                        }
+        break;
+
+    case 'log_client':
+        switch ($request_method) {
+            case 'GET':
+                if ($email != '' && $mdp != '') { 
+                    $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
+                    if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
+                        $data = array('prenom' => getPrenomByEmailClient($email), 'nom' => getNomByEmailClient($email), 'email' => $email, 'profile' => 1, 'id' => getClientId($email));
+                    } else {
+                        $data = false;
                     }
-                    break;
+                }
+                break;
+        }
+        break;
+
+    case 'register_client':
+        switch ($request_method) {
+            case 'POST':
+                if($email != '' && $mdp != '' && $nom != '' && $prenom != '' && $tel != '' && $email_confirm != '' && $mdp_confirm != ''){
+                    $email_existe = emailExisteClient($email);
+                    if ($email !== $email_confirm) {
+                        $data = json_encode("Les adresses email ne correspondent pas");
+                    } elseif ($mdp !== $mdp_confirm) {
+                        $data = json_encode("Les mots de passe ne correspondent pas");
+                    } elseif ($email_existe === true) {
+                        $data = json_encode("L'adresse email existe déjà");
+                    } else {
+                        insertClient($nom, $prenom, $tel, $email, $mdp);
+                        $data = "Client ajouté avec succès";
+                    }
+                } else {
+                    $data = json_encode("Tous les champs doivent être remplis");
+                }
+                break;
+        }
+        break;
+
+    case 'log_medecin':
+        switch ($request_method) {
+            case 'GET':
+                if ($email != '' && $mdp != '') { 
+                    $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
+                    if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
+                        $data = array('prenom' => getPrenomByEmailMedecin($email), 'nom' => getNomByEmailMedecin($email), 'email' => $email, 'profile' => 2, 'id' => getMedecinId($email));
+                    } else {
+                        $data = false;
+                    }
+                }
+                break;
+        }
+        break;
+                   
+        case 'register_medecin':
+            switch ($request_method) {
                 case 'POST':
-                    if($email != '' && $mdp != '' && $nom != '' && $prenom != '' && $tel != '' && $email_confirm != '' && $mdp_confirm != ''){
-                        $email_existe = emailExisteClient($email);
+                    if($email != '' && $mdp != '' && $nom != '' && $prenom != '' && $tel != '' && $email_confirm != '' && $mdp_confirm != '' && $codePostal != '' && $specialite !='' && $adresse != '' && $ville != '' &&  $type !=''){
+                        $email_existe = emailExisteMedecin($email);
                         if ($email !== $email_confirm) {
                             $data = json_encode("Les adresses email ne correspondent pas");
                         } elseif ($mdp !== $mdp_confirm) {
@@ -75,36 +118,17 @@ switch ($requestRessource) {
                         } elseif ($email_existe === true) {
                             $data = json_encode("L'adresse email existe déjà");
                         } else {
-                            insertClient($nom, $prenom, $tel, $email, $mdp);
-                            $data = "Client ajouté avec succès";
+                            insertMedecin($nom, $prenom, $telephone, $mail, $mot_de_passe, $adresse, $ville, $code_postal, $specialite, $type);
+                            $data = "Medecin ajouté avec succès";
                         }
                     } else {
                         $data = json_encode("Tous les champs doivent être remplis");
                     }
                     exit;
-                    
+            default:
+                header("HTTP/1.0 405 Method Not Allowed");
+                break;
             }
-            break;
-            
-            
-            
-        case 'log_medecin':
-            switch ($request_method) {
-                case 'GET':
-                    if ($email != '' && $mdp != '') { 
-                        $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
-                        if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
-                            $data = array('prenom' => getPrenomByEmailMedecin($email), 'nom' => getNomByEmailMedecin($email), 'email' => $email, 'profile' => 2, 'id' => getMedecinId($email));
-                        } else {
-                            $data = false;
-                        }
-                    }
-                    break;
-                default:
-                    header("HTTP/1.0 405 Method Not Allowed");
-                    break;
-            }
-            break;
         case 'medecin':
             switch ($request_method) {
                 case 'GET':
@@ -176,13 +200,27 @@ switch ($requestRessource) {
                             break;
                         }
                     break;
+                    default;
+                    case 'date':
+                        switch ($request_method) {
+                            case 'GET':
+                                if ($id_medecin != "") {
+                                    $data = getDateDisponible($id_medecin);
+                                }
+                                break;
+                            case 'POST':
+                               
+                                header("HTTP/1.0 405 Method Not Allowed");
+                                break;
+                            default:
+                                header("HTTP/1.0 405 Method Not Allowed");
+                                break;
+                        }
+                        break;
+                    
                 case 'heure':
                     switch ($request_method) {
                         case 'GET':
-                            if($id_medecin!=""){
-
-                                $data = getDateDisponible($id_medecin);
-                            }
                             if($id_medecin!=""&&$date!=""){
                                 $data = getHeuresDisponible($id_medecin, $date);
 
@@ -200,7 +238,7 @@ switch ($requestRessource) {
                         }
               
                  
-                        header("HTTP/1.0 405 Method Not Allowed");
+                    
                         break;
                     case 'heure_special':
                         switch ($request_method) {

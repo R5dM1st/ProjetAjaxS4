@@ -194,7 +194,7 @@ function insertDateJournéeSpecial($medecin, $date, $heure_min, $heure_max){
         try {
             $heure_min = extraireHeure($heure_min);
             $heure_max = extraireHeure($heure_max);
-            for ($i = $heure_min; $i <= $heure_max; $i++) {
+            for ($i = $heure_min; $i < $heure_max; $i++) {
                 $heure = sprintf("%02d:00", $i);
                 $stmt = $conn->prepare("SELECT COUNT(*) FROM heuredisponible WHERE id_medecin = :medecin AND date_dispo = :date_dispo AND heure_dispo = :heure_dispo");
                 $stmt->bindParam(':medecin', $medecin, PDO::PARAM_INT);
@@ -215,23 +215,29 @@ function insertDateJournéeSpecial($medecin, $date, $heure_min, $heure_max){
                     $stmt->execute();
                 }
             }
-            $heure = $heure_max . ":00";
-            $stmt = $conn->prepare("INSERT INTO heuredisponible (id_medecin, date_dispo, heure_dispo, dispo) VALUES (:medecin, :date_dispo, :heure_dispo, true)");
+            $heure_max = extraireHeure($heure_max);
+            $heure_max = sprintf("%02d:00", $heure_max);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM heuredisponible WHERE id_medecin = :medecin AND date_dispo = :date_dispo AND heure_dispo = :heure_dispo");
             $stmt->bindParam(':medecin', $medecin, PDO::PARAM_INT);
             $stmt->bindParam(':date_dispo', $date, PDO::PARAM_STR);
-            $stmt->bindParam(':heure_dispo', $heure, PDO::PARAM_STR);
+            $stmt->bindParam(':heure_dispo', $heure_max, PDO::PARAM_STR);
             $stmt->execute();
-
-            if ($stmt->rowCount() > 0) {
-                echo json_encode("<h3>Les heures de la journée ont bien été ajoutées.</h3>");
-            } else {
-                echo json_encode("<h3>Erreur lors de l'ajout des heures de la journée.</h3>");
-            }
+            $count = $stmt->fetchColumn();
+            if ($count == 0) {
+                $stmt = $conn->prepare("INSERT INTO heuredisponible (id_medecin, date_dispo, heure_dispo, dispo) VALUES (:medecin, :date_dispo, :heure_dispo, true)");
+                $stmt->bindParam(':medecin', $medecin, PDO::PARAM_INT);
+                $stmt->bindParam(':date_dispo', $date, PDO::PARAM_STR);
+                $stmt->bindParam(':heure_dispo', $heure_max, PDO::PARAM_STR);
+                $stmt->execute();
+            }// insert l'heure max
+            
+            echo json_encode("<h3>Les heures de la journée ont bien été ajoutées.</h3>");
         } catch (PDOException $e) {
             echo json_encode('Error : ' . $e->getMessage());
         }
     }
 }
+
 
 
 

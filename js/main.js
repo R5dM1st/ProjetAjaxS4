@@ -3,10 +3,6 @@ if (sessionStorage.getItem('profile') == '1' || sessionStorage.getItem('profile'
 
 }
 
-
-
-
-
 if (sessionStorage.getItem('profile') == '1') {
     var all_info = document.getElementById('all_info');
     all_info.innerHTML = `
@@ -36,7 +32,9 @@ if (sessionStorage.getItem('profile') == '1') {
     var rdv = document.getElementById('rdv');
     rdv.innerHTML = `
         <button id="show_rdv_button" class="btn btn-light">Mes Rendez-vous</button>
-        <button id="find_rdv_button" class="btn btn-light">Trouver <br>un<br> Rendez-vous</button>`;
+        <button id="find_rdv_button" class="btn btn-light">Trouver <br>un<br> Rendez-vous</button>
+        <div id="last_date"></div>`;
+        
 }
 
 if (sessionStorage.getItem('profile') == '2') {
@@ -63,7 +61,9 @@ if (sessionStorage.getItem('profile') == '2') {
 
            
         </style>
-        <button id="all_button" class="btn btn-light">Mes Informations</button>`;
+        <button id="all_button" class="btn btn-light">Mes Informations</button>
+        <div id="last_date"></div>`;
+
         
     
     var rdv = document.getElementById('rdv');
