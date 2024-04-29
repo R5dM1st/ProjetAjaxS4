@@ -52,7 +52,6 @@ function afficheVille(response) {
   function afficheTypesDemande(response) {
     var typesDemande = JSON.parse(response);
     var optionsHtml = '';
-    optionsHtml += '<option value="0">Choisir un type de rendez-vous</option>';
     for (var i = 0; i < typesDemande.length; i++) {
       optionsHtml += '<option value="' + typesDemande[i].id_type_demande + '">' + typesDemande[i].nom_type_demande + '</option>';
     }

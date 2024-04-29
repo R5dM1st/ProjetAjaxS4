@@ -84,7 +84,6 @@ function updateClient(clientId) {
   var telephone = document.getElementById('telephone').value;
   var mail = document.getElementById('mail').value;
 
-  // Envoyez les nouvelles valeurs à une fonction JavaScript de mise à jour ou à une requête AJAX ici
 }
 
 
@@ -507,19 +506,20 @@ function displayHeure($id_medecin, $date) {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function displayMedecin(response) {
-  var medecins = JSON.parse(response);
-  var medecinInfo = document.getElementById('info');
-  medecinInfo.innerHTML = '';
-  
-  medecins.forEach(function (medecin) {
-    if (medecin.mail_medecin === email) {
+  console.log("Response received:", response); // Afficher la réponse reçue dans la console
+  try {
+    var medecins = JSON.parse(response);
+    var medecinInfo = document.getElementById('info');
+    medecinInfo.innerHTML = '';
+
+    medecins.forEach(function(medecin) {
       var cardDiv = document.createElement('div');
       cardDiv.className = 'card';
       cardDiv.style.width = '18rem';
-      
+
       var cardBodyDiv = document.createElement('div');
       cardBodyDiv.className = 'card-body';
-      
+
       cardBodyDiv.innerHTML = `
         <h5 class="card-title">Dr ${medecin.nom_medecin}</h5>
         <h6 class="card-subtitle mb-2 text-muted">Spécialité: ${medecin.specialite_medecin}</h6>
@@ -527,12 +527,15 @@ function displayMedecin(response) {
         <p class="card-text">Mail: ${medecin.mail_medecin}</p>
         <p class="card-text">Adresse: ${medecin.adresse_cabinet}, ${medecin.code_postal_cabinet} ${medecin.ville_cabinet}</p>
       `;
-      
+
       cardDiv.appendChild(cardBodyDiv);
       medecinInfo.appendChild(cardDiv);
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Error parsing JSON:", error); // Afficher toute erreur d'analyse JSON dans la console
+  }
 }
+
 
 
 function displayRdvShowMedecin(response) {
@@ -587,8 +590,17 @@ function displayRdvShowMedecin(response) {
           console.log(id_rdv);
         });
       });
+      
       var deleteButton = rdvRow.querySelector('#btn_delete');
       deleteButton.addEventListener('click', function() {
+        if (rdvs.length === 0) {
+          var rdvDiv = document.createElement('div');
+          rdvDiv.innerHTML = `
+            <div class="alert alert-danger" role="alert">
+              Aucun rendez-vous trouvé
+            </div>`;
+          rdvInfo.appendChild(rdvDiv);
+        }
         deleteRDV(id_rdv);
         rdvTableBody.removeChild(rdvRow)
       });
@@ -809,8 +821,7 @@ if (typeProfile === '1') {
   });
 
   $('#all_button').on('click', () => {
-    currentTitle = 'Liste des Médecins inscrits';
-    ajaxRequest('GET', './request.php/medecin', displayMedecin);
+    ajaxRequest('GET', './request.php/medecin/' + id, displayMedecin);
     console.log('Medecin');
   });
 

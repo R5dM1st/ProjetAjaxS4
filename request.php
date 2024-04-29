@@ -129,10 +129,13 @@ switch ($requestRessource) {
                 header("HTTP/1.0 405 Method Not Allowed");
                 break;
             }
+
             case 'medecin':
                 switch ($request_method) {
                     case 'GET':
-                        if (!empty($nom)) {
+                        if($id!=NULL){
+                            $data = get_medecinById($id);
+                        }elseif (!empty($nom)) {
                             $data = medecinselect("", "", "", $nom);
                         } elseif (!empty($ville) && !empty($specialite) && !empty($type)) {
                             $data = medecinselect($ville, $specialite, $type, "");
@@ -148,8 +151,6 @@ switch ($requestRessource) {
                             $data = medecinselect("", $specialite, "", "");
                         } elseif (!empty($type)) {
                             $data = medecinselect("", "", $type, "");
-                        } elseif (!empty($id)) {
-                            $data = get_medecinById($id);
                         } else {
                             $data = "";
                         }

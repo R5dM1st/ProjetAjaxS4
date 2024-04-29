@@ -9,6 +9,7 @@ function profileUtilisateur() {
             width: 15px;
             height: 15px;
             border-radius: 50%;
+            margin-down: 100px;
             display: inline-block;
             
         }
@@ -29,7 +30,9 @@ function profileUtilisateur() {
             margin-left: 100px;
      
         }
-        
+        h5{
+            padding: 10px;
+        }
     `;
     document.head.appendChild(circleStyles);
 
@@ -43,11 +46,11 @@ function profileUtilisateur() {
         if(sessionStorage.getItem('profile') == '1'){
             info.innerHTML='<i class="fas fa-user"></i>';
         } else {
-            info.innerHTML='<i class="fas fa-user-md"></i><p></p>';
+            info.innerHTML='<i class="fas fa-user-md"></i>';
         }
         profile.appendChild(info);
         const userInfo = document.createElement('div');
-        userInfo.innerHTML = `<h5>${prenom} ${nom}</h5>`;
+        userInfo.innerHTML = `<h5>" "${prenom} ${nom}""</h5>`;
         profile.appendChild(userInfo);
 
         const greenCircle = document.createElement('div');
