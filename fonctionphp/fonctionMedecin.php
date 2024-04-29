@@ -255,88 +255,61 @@ function getPasswordByEmail_Hash_Medecin($email){
     }
     return null;
 }
-function medecinselect($ville, $specialite, $type){
+function medecinselect($ville, $specialite, $type, $nom) {
     $conn = dbConnect();
     if ($conn) {
         try {
-            
-            $sql = "SELECT * FROM medecin where ville_cabinet = :ville and specialite_medecin = :specialite and id_type_demande = :type_demande";
-    
+            $sql = "SELECT * FROM medecin WHERE 1=1";
+            $params = [];
+
+            if (!empty($ville)) {
+                $sql .= " AND ville_cabinet = :ville";
+                $params[':ville'] = $ville;
+            }
+
+            if (!empty($specialite)) {
+                $sql .= " AND specialite_medecin = :specialite";
+                $params[':specialite'] = $specialite;
+            }
+
+            if (!empty($type)) {
+                $sql .= " AND id_type_demande = :type_demande";
+                $params[':type_demande'] = $type;
+            }
+            if(!empty($nom)) {
+                $sql .= " AND nom_medecin = :nom";
+                $params[':nom'] = $nom;
+            }
+
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':ville', $ville);
-            $stmt->bindParam(':specialite', $specialite);
-            $stmt->bindParam(':type_demande', $type);
-            $stmt->execute(); 
+            $stmt->execute($params);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
             return $result;
         } catch (PDOException $e) {
-            
             echo 'Error : ' . $e->getMessage();
-            return false; 
+            return false;
+        }
+    }
+}
+function medecinselectByNom($nom){
+    $conn = dbConnect();
+    if ($conn) {
+        try {
+            $sql = "SELECT * FROM medecin WHERE 1=1";
+
+                $sql .= " AND id_type_demande = :nom";
+                $params[':type_demande'] = $nom;
+            
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (PDOException $e) {
+            echo 'Error : ' . $e->getMessage();
+            return false;
         }
     }
 }
 
-
-function afficherMedecinsDispo($ville,$specialité,$type) {
-    $medecinsDispo = medecinselect($ville, $specialité,$type);
-
-    
-    echo "<style>
-        .card{
-            margin: 0 auto;
-            width: 400px;
-            background-color: white;
-            margin-top: 50px;
-            margin-bottom: 50px;
-            text-align: center;
-        }
-        .card-title {
-            margin-top: 20px;
-        }
-        .card-text {
-            margin-top: 20px;
-        }
-        .btn {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-        h1{
-            text-align: center;
-            padding: 50px;
-            color: white;
-        }
-        img{
-            width: 100px;
-            height: 100px;
-        }
-
-    </style>";
-    if($medecinsDispo == null){
-        echo "<h1>Il n'y a pas de médecins ".$specialité." disponibles à ".$ville." pour une ".$type."</h1>";
-    }
-    else{
-        echo "<h1>Voici les médecins ".$specialité." disponibles à ".$ville." pour une ".$type."</h1>";
-    }
-
-    foreach ($medecinsDispo as $medecin) {
-        echo '<div class="card">';
-        echo '<div class="card-body">';
-        echo '<img src="image/docteurPessi.png" alt="image" class="card-image">';
-        echo '<h5 class="card-title">'.$medecin['prenom_medecin'] . ' ' . $medecin['nom_medecin'] . '</h5>';
-        echo '<p class="card-text">' . $medecin['specialite_medecin'] . '</p>';
-        echo '<p class="card-text">' . $medecin['telephone_cabinet'] . '</p>';
-        echo '<p class="card-text">' . $medecin['mail_medecin'] . '</p>';
-        echo '<p class="card-text">' . $medecin['adresse_cabinet'] . '</p>';
-        echo '<p class="card-text">' . $medecin['ville_cabinet'] . '</p>';
-        echo '<p class="card-text">' . $medecin['code_postal_cabinet'] . '</p>';
-        echo '<form method="post" action="selecte_heure.php">';
-        echo '<input type="hidden" name="id_medecin" value="' . $medecin['id_medecin'] . '">';
-        echo '<button type="submit" class="btn btn-primary">Prendre rendez-vous</button>';
-        echo '</form>';
-        echo '</div>';
-        echo '</div>';
-    }
-}
 ?>

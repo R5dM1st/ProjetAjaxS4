@@ -129,23 +129,38 @@ switch ($requestRessource) {
                 header("HTTP/1.0 405 Method Not Allowed");
                 break;
             }
-        case 'medecin':
-            switch ($request_method) {
-                case 'GET':
-                    if($ville != '' && $specialite != '' && $type != '') {
-                        $data = medecinselect($ville, $specialite, $type);
-                    }
-                    else if ($id!=NULL) {
-                        $data = get_medecinById($id);
-                    } else {
-                        $data = get_allmedecin();
-                    }
-                    break;
-                default:
-                    header("HTTP/1.0 405 Method Not Allowed");
-                    break;
-            }
-            break;
+            case 'medecin':
+                switch ($request_method) {
+                    case 'GET':
+                        if (!empty($nom)) {
+                            $data = medecinselect("", "", "", $nom);
+                        } elseif (!empty($ville) && !empty($specialite) && !empty($type)) {
+                            $data = medecinselect($ville, $specialite, $type, "");
+                        } elseif (!empty($ville) && !empty($specialite)) {
+                            $data = medecinselect($ville, $specialite, "", "");
+                        } elseif (!empty($ville) && !empty($type)) {
+                            $data = medecinselect($ville, "", $type, "");
+                        } elseif (!empty($specialite) && !empty($type)) {
+                            $data = medecinselect("", $specialite, $type, "");
+                        } elseif (!empty($ville)) {
+                            $data = medecinselect($ville, "", "", "");
+                        } elseif (!empty($specialite)) {
+                            $data = medecinselect("", $specialite, "", "");
+                        } elseif (!empty($type)) {
+                            $data = medecinselect("", "", $type, "");
+                        } elseif (!empty($id)) {
+                            $data = get_medecinById($id);
+                        } else {
+                            $data = "";
+                        }
+                        break;
+                    default:
+                        header("HTTP/1.0 405 Method Not Allowed");
+                        break;
+                }
+                break;
+            
+            
             case 'rdv':
                 switch ($request_method) {
                     case 'POST':

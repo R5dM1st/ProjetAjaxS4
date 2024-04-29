@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <input type="password" class="form-control" name="mdp-confirm" id="mdp-confirm" placeholder="Confirmation Mot de passe" value="" required>
             </div>
             <button type="submit" class="btn btn-primary" >Valider</button>
-            <a class="dropdown-item" id="log_medecin">Vous avez déjà un compte ?</a>
+            <a class="dropdown-item" id="login_medecin">Vous avez déjà un compte ?</a>
             </form>
             <div id="message"></div>`);
         }
@@ -172,7 +172,35 @@ document.addEventListener("DOMContentLoaded", function() {
                 <input type="password" class="form-control" name="mdp-confirm" id="mdp-confirm" placeholder="Confirmation Mot de passe"  required>
             </div>
             <button type="submit" class="btn btn-primary">Valider</button>
-            <a class="dropdown-item" id="log_client">Vous avez déjà un compte ?</a>
+            <a class="dropdown-item" id="login_client">Vous avez déjà un compte ?</a>
+            </form>
+            <div id="message"></div>`);
+        }
+    });
+    document.addEventListener("click", function(event) {
+        if (event.target.id === "log_client") {
+            showModal(`<style>
+            .loginForm {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            h2 {
+                text-align: center;
+            }
+            </style>
+            <form class="px-4 py-3 shadow p-3 mb-5 bg-white rounded" id="loginForm" style="width: 400px; margin: 0 auto; text-align: center;">
+                <h2>Connectez-vous</h2>
+                <div class="form-group">
+                    <label for="email">Entre ton mail</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="mdp">Entre Mot de passe</label>
+                    <input type="password" class="form-control" name="mdp" id="mdp" placeholder="Password" required>
+                </div>
+                <button type="submit" id="btn_client" class="btn btn-primary">Valider</button>
+                <a class="dropdown-item" id="register_link_client">Vous n'avez pas de compte ?</a>
             </form>
             <div id="message"></div>`);
         }

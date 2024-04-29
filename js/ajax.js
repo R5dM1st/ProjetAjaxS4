@@ -23,6 +23,8 @@ function displayClient(response) {
   var clients = JSON.parse(response);
   var clientInfo = document.getElementById('info');
   clientInfo.innerHTML = '';
+  var print = document.getElementById('print');
+  print.innerHTML = '';
   
   clients.forEach(function (client) {
     if (client.mail_client === email) {
@@ -37,13 +39,54 @@ function displayClient(response) {
         <h5 class="card-title">${client.nom_client} ${client.prenom_client}</h5>
         <p class="card-text">Téléphone: 0${client.telephone_client}</p>
         <p class="card-text">Mail: ${client.mail_client}</p>
-      `;
+        `;
       
       cardDiv.appendChild(cardBodyDiv);
       clientInfo.appendChild(cardDiv);
     }
   });
 }
+
+function displayEditForm(client) {
+  var cardBodyDiv = document.querySelector('.card-body');
+  cardBodyDiv.innerHTML = `
+    <form id="editForm">
+      <div class="form-group">
+        <label for="nom">Nom:</label>
+        <input type="text" id="nom" name="nom" value="${client.nom_client}">
+      </div>
+      <div class="form-group">
+        <label for="prenom">Prénom:</label>
+        <input type="text" id="prenom" name="prenom" value="${client.prenom_client}">
+      </div>
+      <div class="form-group">
+        <label for="telephone">Téléphone:</label>
+        <input type="text" id="telephone" name="telephone" value="${client.telephone_client}">
+      </div>
+      <div class="form-group">
+        <label for="mail">Mail:</label>
+        <input type="text" id="mail" name="mail" value="${client.mail_client}">
+      </div>
+      <button type="submit">Enregistrer les modifications</button>
+    </form>
+  `;
+
+  var editForm = document.getElementById('editForm');
+  editForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    updateClient(client.client_id);
+  });
+}
+
+function updateClient(clientId) {
+  var nom = document.getElementById('nom').value;
+  var prenom = document.getElementById('prenom').value;
+  var telephone = document.getElementById('telephone').value;
+  var mail = document.getElementById('mail').value;
+
+  // Envoyez les nouvelles valeurs à une fonction JavaScript de mise à jour ou à une requête AJAX ici
+}
+
 
 function displayRdvShowClient(response) {
   var rdvInfo = document.getElementById('info');
@@ -192,13 +235,14 @@ function displayFindRdv() {
                 </select>
                 
             </div>
-            <div class="form-group">
-                <label for="nom">Nom du Docteur:</label>
-                <input type="text" class="form-control" id="nom" name="nom">
-            </div>
+
             <div class="form_submit">
                 <button type="submit" id="find_search" class="btn btn-primary">Rechercher</button>
             </div>
+            <div class="form-group">
+            <label for="nom">Nom du Docteur:</label>
+            <input type="text" class="form-control" id="nom" name="nom">
+        </div>
         </form>
     </div>`;
 
@@ -210,12 +254,16 @@ function displayFindRdv() {
     var ville = $('#ville').val();
     var specialite = $('#specialite').val();
     var typeRDV = $('#typeRDV').val();
+    var nom = $('#nom').val();
 
-    console.log(ville, specialite, typeRDV);
-
-    ajaxRequest('GET', './request.php/medecin?' + 'ville=' + encodeURIComponent(ville) + '&specialite=' + encodeURIComponent(specialite) + '&type=' + encodeURIComponent(typeRDV), displayAfficheMedecin);
-
-  });
+    console.log(ville, specialite, typeRDV, nom);
+      var url = './request.php/medecin?';
+      if (ville != 0) url += 'ville=' + encodeURIComponent(ville);
+      if (specialite != 0) url += '&specialite=' + encodeURIComponent(specialite);
+      if (typeRDV != 0) url += '&type=' + encodeURIComponent(typeRDV);
+      if (nom.trim() !== '') url += '&nom=' + encodeURIComponent(nom);
+      ajaxRequest('GET', url, displayAfficheMedecin);
+});
 }
 
 
@@ -237,6 +285,8 @@ function displayAfficheMedecin(response) {
       Aucun médecin trouvé pour cette recherche
       </div>`;
       medecinInfo.appendChild(errorMessage);
+      window.scrollTo(0,document.body.scrollHeight);
+      
     } else {
       medecins.forEach(function (medecin) {
         var clientDiv = document.createElement('div');
@@ -744,6 +794,7 @@ if (typeProfile === '1') {
     displayHeure();
     console.log('Mes informations');
   });
+
 
 } else if (typeProfile === '2') {
   $('#add_rdv_button').on('click', () => {

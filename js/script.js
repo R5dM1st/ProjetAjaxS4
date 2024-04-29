@@ -74,9 +74,6 @@ function afficheVille(response) {
     return optionsHtml;
   }
   
-  
-  
-  
   function afficheHeure(response) {
     var heures = JSON.parse(response);
     var optionsHtml = '';
