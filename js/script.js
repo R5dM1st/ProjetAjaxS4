@@ -52,6 +52,7 @@ function afficheVille(response) {
   function afficheTypesDemande(response) {
     var typesDemande = JSON.parse(response);
     var optionsHtml = '';
+    optionsHtml += '<option value="0">Choisir un type de demande</option>';
     for (var i = 0; i < typesDemande.length; i++) {
       optionsHtml += '<option value="' + typesDemande[i].id_type_demande + '">' + typesDemande[i].nom_type_demande + '</option>';
     }
@@ -62,7 +63,6 @@ function afficheVille(response) {
     var optionsHtml = '<option value="0">Choisir une date de rendez-vous</option>';
     
     for (var i = 0; i < dates.length; i++) {
-      // Assurez-vous que la propriété date_dispo est définie pour l'élément
       if (dates[i].date_dispo !== undefined) {
         optionsHtml += '<option value="' + dates[i].date_dispo + '">' + dates[i].date_dispo + '</option>';
       } else {

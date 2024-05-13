@@ -19,6 +19,7 @@ console.log(typeProfile);
 //-------------------------------------------------------------------------------PARTIE CLIENT-----------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
 function displayClient(response) {
   var clients = JSON.parse(response);
   var clientInfo = document.getElementById('info');
@@ -35,17 +36,24 @@ function displayClient(response) {
       var cardBodyDiv = document.createElement('div');
       cardBodyDiv.className = 'card-body';
       
-      cardBodyDiv.innerHTML = `
-        <h5 class="card-title">${client.nom_client} ${client.prenom_client}</h5>
-        <p class="card-text">Téléphone: 0${client.telephone_client}</p>
-        <p class="card-text">Mail: ${client.mail_client}</p>
-        `;
-      
+      cardBodyDiv.innerHTML = ` 
+      <h5 class="card-title">${client.prenom_client} ${client.nom_client}</h5>
+      <p class="card-text">Téléphone: 0${client.telephone_client}</p>
+      <p class="card-text">Mail: ${client.mail_client}</p>
+      <button class="btn btn-warning" id="editButton">Modifier votre profile</button>`;
       cardDiv.appendChild(cardBodyDiv);
       clientInfo.appendChild(cardDiv);
+
+      var editButton = document.getElementById('editButton');
+      editButton.addEventListener('click', function() {
+        displayEditForm(client);
+      });
     }
   });
 }
+
+
+ 
 
 function displayEditForm(client) {
   var cardBodyDiv = document.querySelector('.card-body');
@@ -67,7 +75,7 @@ function displayEditForm(client) {
         <label for="mail">Mail:</label>
         <input type="text" id="mail" name="mail" value="${client.mail_client}">
       </div>
-      <button type="submit">Enregistrer les modifications</button>
+      <button class="btn btn-warning" id="editButton">Modifier votre profile</button>
     </form>
   `;
 
@@ -75,6 +83,7 @@ function displayEditForm(client) {
   editForm.addEventListener('submit', function(event) {
     event.preventDefault();
     updateClient(client.client_id);
+    
   });
 }
 
@@ -234,14 +243,15 @@ function displayFindRdv() {
                 </select>
                 
             </div>
-
-            <div class="form_submit">
-                <button type="submit" id="find_search" class="btn btn-primary">Rechercher</button>
-            </div>
             <div class="form-group">
             <label for="nom">Nom du Docteur:</label>
             <input type="text" class="form-control" id="nom" name="nom">
         </div>
+
+            <div class="form_submit">
+                <button type="submit" id="find_search" class="btn btn-primary">Rechercher</button>
+            </div>
+
         </form>
     </div>`;
 
@@ -267,7 +277,6 @@ function displayFindRdv() {
 
 
 function displayAfficheMedecin(response) {
-  try {
     var medecins = JSON.parse(response);
     var medecinInfo = document.getElementById('print');
     medecinInfo.innerHTML = '';
@@ -350,23 +359,18 @@ function displayAfficheMedecin(response) {
       
       });
     }
-  } catch (error) {
-    console.error("Erreur lors de l'analyse de la réponse JSON : ", error);
-    var errorMessage = document.createElement('p');
-    errorMessage.textContent = "Erreur lors de la récupération des données. Veuillez réessayer plus tard.";
-    document.getElementById('info').appendChild(errorMessage);
-  }
+   
+  
 }
-
 function displayerCommande(id_medecin) {
   var findRdv = document.getElementById('info');
   var print = document.getElementById('print');
   print.innerHTML = '';
   findRdv.innerHTML = '';
 
-  ajaxRequest('GET', './request.php/date?id_medecin='+id_medecin, function(response) {
+  ajaxRequest('GET', './request.php/heure?id_medecin='+id_medecin, function(response) {
     var dateSelect = document.getElementById('dateRDV');
-    dateSelect.innerHTML = affichedate(response); 
+    dateSelect.innerHTML = affichedate(response);
   });
 
   var rdvDiv = document.createElement('div');
@@ -378,16 +382,13 @@ function displayerCommande(id_medecin) {
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         background-color: #f9f9f9;
       }
-      form{
-        text-align: center;
-      }
     </style>
     <div class="container">
       <form id="rdvForm">
         <div class="form-group">
           <label for="date">Date:</label>
           <select class="form-control" id="dateRDV" name="date">
-          <option value="0">Choisir une date de rendez-vous</option>
+            <option value="0">Choisir une date de rendez-vous</option>
           </select>
         </div>
         <button type="button" class="btn btn-info" id="btn_date">Rechercher</button>
@@ -407,7 +408,6 @@ function displayerCommande(id_medecin) {
           margin: 0 auto;
           text-align: center;
       }
-      
       </style>
       <div class="alert alert-danger" role="alert">
       Aucune date sélectionnée
@@ -415,58 +415,23 @@ function displayerCommande(id_medecin) {
       error_date.appendChild(errorMessage);
     } else {
       displayHeure(id_medecin, date);
+
     }
   });
 }
-
-
-
-
 function displayHeure($id_medecin, $date) {
-   ajaxRequest('GET', './request.php/heure?id_medecin='+$id_medecin+'&date='+$date, function(response) {
-     var heureSelect = document.getElementById('heure');
-     heureSelect.innerHTML = afficheHeure(response);
-  
-   });
-   var errorMessage = document.getElementById('print');
-    errorMessage.innerHTML = '';
-   var findRdv = document.getElementById('info');
-   findRdv.innerHTML = '';
-   var rdvDiv = document.createElement('div');
-    rdvDiv.innerHTML = `
-      <style>
-        .container {
-          padding: 30px;
-          border-radius: 5px;
-          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-          background-color: #f9f9f9;
-        }
-        form{
-          text-align: center;
-        }
-      </style>
-      <div class="container">
-        <form id="heureForm">
-        <h4>Vous avez choisit la date du</h4><br><h3>${dateComplete($date)}</h3>
-          <div class="form-group">
-            <label for="heure">Maintenant choisissez une heure:</label>
-            <select class="form-control" id="heure" name="heure">
-              <option value="0">Choisir une heure de rendez-vous</option>
-            </select>
-          </div>
-          <button type="button" class="btn btn-info" id="btn_heure">Rechercher</button>
-        </form>
-      </div>`;
-    findRdv.appendChild(rdvDiv);
-    $('#btn_heure').on('click', function() {
-      var error_date = document.getElementById('print');
-    error_date.innerHTML = '';
-      console.log($date);
-      var heure = document.getElementById('heure').value;
-      console.log(heure);
-      if(heure == '0'){
-        var errorMessage = document.createElement('p');
-        errorMessage.innerHTML = `<style>
+  ajaxRequest('GET', './request.php/heure?id_medecin=' + $id_medecin + '&date=' + $date, function(response) {
+    var rdvInfo = document.getElementById('info');
+    rdvInfo.innerHTML = '';
+
+    var rdvs = JSON.parse(response);
+    rdvs = rdvs.filter(function(rdv) {
+      return rdv.date_dispo !== null && rdv.date_dispo !== undefined && rdv.date_dispo !== '';
+    });
+
+    if (rdvs.length === 0) {
+      var errorMessage = document.createElement('p');
+      errorMessage.innerHTML = `<style>
         .alert{
             width: 400px;
             margin: 0 auto;
@@ -474,31 +439,85 @@ function displayHeure($id_medecin, $date) {
         }
         </style>
         <div class="alert alert-danger" role="alert">
-        Aucune heure sélectionnée
+        Aucune heure disponible pour cette date
         </div>`;
-        error_date.appendChild(errorMessage);
-      }
-      if(heure!='0'){
-        ajaxRequest('POST', './request.php/rdv?id_client=' + encodeURIComponent(id) + '&id_medecin=' + encodeURIComponent($id_medecin)+ '&date=' + encodeURIComponent($date) + '&heure=' + encodeURIComponent(heure));
-        var successMessage = document.createElement('p');
-        successMessage.innerHTML = `<style>
-        .alert{
-            width: 400px;
-            margin: 0 auto;
+      rdvInfo.appendChild(errorMessage);
+    } else {
+      var heureSelect = document.getElementById('heure');
+      heureSelect.innerHTML = afficheHeure(rdvs);
+
+      var rdvDiv = document.createElement('div');
+      rdvDiv.innerHTML = `
+        <style>
+          .container {
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+          }
+
+          form {
             text-align: center;
-        }
+          }
         </style>
-        <div class="alert alert-success" role="alert">
-        Rendez-vous pris avec succès
+        <div class="container">
+          <form id="heureForm">
+            <h4>Vous avez choisi la date du</h4><br><h3>${dateComplete($date)}</h3>
+            <div class="form-group">
+              <label for="heure">Maintenant choisissez une heure :</label>
+              <select class="form-control" id="heure" name="heure">
+                <option value="0">Choisir une heure de rendez-vous</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-info" id="btn_heure">Rechercher</button>
+          </form>
         </div>`;
-        error_date.appendChild(successMessage);
-        setTimeout(function(){
-          document.location.href = 'index.html';
-        }, 2000);
-        
+      rdvInfo.appendChild(rdvDiv);
+
+      $('#btn_heure').on('click', function() {
+        var error_date = document.getElementById('print');
+        error_date.innerHTML = '';
+        console.log($date);
+        var heure = document.getElementById('heure').value;
+        console.log(heure);
+        if (heure == '0') {
+          var errorMessage = document.createElement('p');
+          errorMessage.innerHTML = `<style>
+            .alert{
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-danger" role="alert">
+            Aucune heure sélectionnée
+            </div>`;
+          error_date.appendChild(errorMessage);
+        } else {
+          
+          ajaxRequest('POST', './request.php/rdv?id_client=' + encodeURIComponent(id) + '&id_medecin=' + encodeURIComponent($id_medecin) + '&date=' + encodeURIComponent($date) + '&heure=' + encodeURIComponent(heure));
+          var successMessage = document.createElement('p');
+          successMessage.innerHTML = `<style>
+            .alert{
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-success" role="alert">
+            Rendez-vous pris avec succès
+            </div>`;
+          error_date.appendChild(successMessage);
+          setTimeout(function() {
+            document.location.href = 'index.html';
+          }, 2000);
+        }
+      });
     }
-});
-   }
+  });
+}
+
+
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -506,38 +525,75 @@ function displayHeure($id_medecin, $date) {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function displayMedecin(response) {
-  console.log("Response received:", response); // Afficher la réponse reçue dans la console
-  try {
-    var medecins = JSON.parse(response);
-    var medecinInfo = document.getElementById('info');
-    medecinInfo.innerHTML = '';
-
-    medecins.forEach(function(medecin) {
-      var cardDiv = document.createElement('div');
-      cardDiv.className = 'card';
-      cardDiv.style.width = '18rem';
-
-      var cardBodyDiv = document.createElement('div');
-      cardBodyDiv.className = 'card-body';
-
-      cardBodyDiv.innerHTML = `
-        <h5 class="card-title">Dr ${medecin.nom_medecin}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">Spécialité: ${medecin.specialite_medecin}</h6>
+  var medecin = JSON.parse(response);
+  var medecinInfo = document.getElementById('info');
+  medecinInfo.innerHTML = '';
+  var print = document.getElementById('print');
+  print.innerHTML = '';
+  if (typeof medecin === 'object' && medecin !== null) {
+    var medecinDiv = document.createElement('div');
+    medecinDiv.innerHTML = `<div class="card">
+      <div class="card-body">
+        <h5 class="card-title">${medecin.nom_medecin} ${medecin.prenom_medecin}</h5>
+        <p class="card-text">${medecin.specialite_medecin}</p>
+        <p class="card-text">${medecin.ville_cabinet}</p>
+        <p class="card-text">${medecin.adresse_cabinet}</p>
+        <p class="card-text">${medecin.code_postal_cabinet}</p>
         <p class="card-text">Téléphone: 0${medecin.telephone_cabinet}</p>
-        <p class="card-text">Mail: ${medecin.mail_medecin}</p>
-        <p class="card-text">Adresse: ${medecin.adresse_cabinet}, ${medecin.code_postal_cabinet} ${medecin.ville_cabinet}</p>
-      `;
-
-      cardDiv.appendChild(cardBodyDiv);
-      medecinInfo.appendChild(cardDiv);
+        <p class="card-text">${medecin.mail_medecin}</p>
+        <button class="btn btn-warning" id="editButton">Modifier votre profile</button>
+      </div>
+    </div>`;
+    medecinInfo.appendChild(medecinDiv);
+    $('#editButton').on('click', function() {
+      displayEditForm(medecin);
     });
-  } catch (error) {
-    console.error("Error parsing JSON:", error); // Afficher toute erreur d'analyse JSON dans la console
+  } else {
+    console.error("La réponse du serveur n'est pas au format attendu.");
   }
 }
-
-
-
+function displayEditForm(client) {
+  var cardBodyDiv = document.querySelector('.card-body');
+  cardBodyDiv.innerHTML = `
+    <form id="editForm">
+      <div class="form-group">
+        <label for="nom">Nom:</label>
+        <input type="text" id="nom" name="nom" value="${client.nom_client}">
+      </div>
+      <div class="form-group">
+        <label for="prenom">Prénom:</label>
+        <input type="text" id="prenom" name="prenom" value="${client.prenom_client}">
+      </div>
+      <div class="form-group">
+        <label for="telephone">Téléphone:</label>
+        <input type="text" id="telephone" name="telephone" value="${client.telephone_client}">
+      </div>
+      <div class="form-group">
+        <label for="mail">Mail:</label>
+        <input type="text" id="mail" name="mail" value="${client.mail_client}">
+      </div>
+      <button class="btn btn-warning" id="editButton">Modifier votre profile</button>
+    </form>
+  `;
+  $('#editButton').on('click', function(event) {
+    event.preventDefault();
+    ajaxRequest('GET', './request.php/medecin?nom='+encodeURIComponent(client.nom)+'&prenom='+encodeURIComponent(client.prenom)+'&tel='+encodeURIComponent(client.tel)+'&mail='+encodeURIComponent(client.mail)+'&postal='+encodeURIComponent(client.postal)+'&adresse='+encodeURIComponent(client.adresse)+'&ville='+encodeURIComponent(client.ville), function(response) {
+      var successMessage = document.createElement('p');
+      successMessage.innerHTML = `<style>
+        .alert {
+          width: 400px;
+          margin: 0 auto;
+          margin-top: 20px;
+          text-align: center;
+        }
+      </style>
+      <div class="alert alert-success" role="alert">
+        Profile modifié
+      </div>`;
+      cardBodyDiv.appendChild(successMessage);
+  });
+});
+}
 function displayRdvShowMedecin(response) {
   var rdvInfo = document.getElementById('info');
   rdvInfo.innerHTML = '';
@@ -580,54 +636,42 @@ function displayRdvShowMedecin(response) {
         <td><p>${dateComplete(rdv.date_dispo)}</p></td>
         <td><p>${rdv.heure_dispo}</p></td>
         <td><p>${rdv.nom_client}</p></td>
-        <td><button class="btn btn-danger" id="btn_delete" data-id="${rdv.id_rdv}" >Supprimer</button></td>`;
+        <td><button class="btn btn-danger btn_delete" data-id="${rdv.id_rdv}" >Supprimer</button></td>`;
       rdvTableBody.appendChild(rdvRow);
-      var id_rdv = rdv.id_rdv
-      var reprendreButtons = document.querySelectorAll('#btn_delete');
-      reprendreButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
-          var id_rdv = this.getAttribute('data-id');
-          console.log(id_rdv);
-        });
-      });
-      
-      var deleteButton = rdvRow.querySelector('#btn_delete');
-      deleteButton.addEventListener('click', function() {
-        if (rdvs.length === 0) {
-          var rdvDiv = document.createElement('div');
-          rdvDiv.innerHTML = `
-            <div class="alert alert-danger" role="alert">
-              Aucun rendez-vous trouvé
-            </div>`;
-          rdvInfo.appendChild(rdvDiv);
-        }
-        deleteRDV(id_rdv);
-        rdvTableBody.removeChild(rdvRow)
-      });
     });
-    
-  }
-  var rechercheRDV = document.getElementById('rechercheRDV');
-  rechercheRDV.addEventListener('input', function() {
-    var filterValue = this.value.toUpperCase();
-    var rows = rdvTableBody.getElementsByTagName('tr');
-    for (var i = 0; i < rows.length; i++) {
-      var cols = rows[i].getElementsByTagName('td');
-      var display = false;
-      for (var j = 0; j < cols.length; j++) {
-        var textValue = cols[j].textContent || cols[j].innerText;
-        if (textValue.toUpperCase().indexOf(filterValue) > -1) {
-          display = true;
-          break;
-        }
-      }
-      rows[i].style.display = display ? '' : 'none';
-    }
-  });
 
-  var printDiv = document.getElementById('print');
-  printDiv.innerHTML = '';
+    var rechercheRDV = document.getElementById('rechercheRDV'); // Placer la déclaration de rechercheRDV ici
+    rechercheRDV.addEventListener('input', function() {
+      var filterValue = this.value.toUpperCase();
+      var rows = rdvTableBody.getElementsByTagName('tr');
+      for (var i = 0; i < rows.length; i++) {
+        var cols = rows[i].getElementsByTagName('td');
+        var display = false;
+        for (var j = 0; j < cols.length; j++) {
+          var textValue = cols[j].textContent || cols[j].innerText;
+          if (textValue.toUpperCase().indexOf(filterValue) > -1) {
+            display = true;
+            break;
+          }
+        }
+        rows[i].style.display = display ? '' : 'none';
+      }
+    });
+
+    rdvTableBody.addEventListener('click', function(event) {
+      if (event.target.classList.contains('btn_delete')) {
+        var id_rdv = event.target.getAttribute('data-id');
+        deleteRDV(id_rdv);
+        event.target.closest('tr').remove();
+      }
+    });
+
+    var printDiv = document.getElementById('print');
+    printDiv.innerHTML = '';
+  }
 }
+
+
 
 function deleteRDV(id_rdv) {
   ajaxRequest('GET','./request.php/delete_rdv_medecin/?id_rdv='+encodeURIComponent(id_rdv),function(){
@@ -770,7 +814,7 @@ function displayNewRdv() {
     });
   }
   }
-}    
+}
 
 
 
@@ -797,9 +841,7 @@ if (typeProfile === '1') {
   });
 
   $('#all_button').on('click', () => {
-    currentTitle = 'Mes Informations';
     ajaxRequest('GET', './request.php/client/' + id, displayClient);
-    console.log('Mes informations');
   });
   $('#find_date_search').on('click', () => {
     currentTitle = 'Mes Informations';
@@ -819,10 +861,9 @@ if (typeProfile === '1') {
     ajaxRequest('GET', './request.php/rdv_medecin/' + id, displayRdvShowMedecin);
     console.log('rdv');
   });
-
   $('#all_button').on('click', () => {
     ajaxRequest('GET', './request.php/medecin/' + id, displayMedecin);
-    console.log('Medecin');
+
   });
 
 }

@@ -30,8 +30,8 @@ function profileUtilisateur() {
             margin-left: 100px;
      
         }
-        h5{
-            padding: 10px;
+        #info_user {
+            margin-right: 10px;
         }
     `;
     document.head.appendChild(circleStyles);
@@ -50,7 +50,7 @@ function profileUtilisateur() {
         }
         profile.appendChild(info);
         const userInfo = document.createElement('div');
-        userInfo.innerHTML = `<h5>" "${prenom} ${nom}""</h5>`;
+        userInfo.innerHTML = `<h5>  ${prenom} ${nom}</h5>`;
         profile.appendChild(userInfo);
 
         const greenCircle = document.createElement('div');

@@ -165,11 +165,10 @@ function findAllville() {
             $villes = $result->fetchAll();
             return $villes;
         } catch (PDOException $e) {
-            // Retourner false en cas d'erreur
             return false;
         }
     } else {
-        // Retourner false si la connexion échoue
+
         return false;
     }
 }
@@ -201,38 +200,45 @@ function afficheVille(){
         echo '<option value="' . $ville['ville_cabinet'] . '">' . $ville['ville_cabinet'] . '</option>';
     }
 }
-function insertMedecin($nom, $prenom, $telephone, $mail, $mot_de_passe, $adresse, $ville, $code_postal, $specialite, $type){
-    if ($type == "Consultation") {
-        $type = 1;
-    }
-    if ($type == "Urgence") {
-        $type = 2;
-    }
-    if ($type == "Visite à domicile") {
-        $type = 3;
-    }
-    $specialite = strtolower($specialite);
-    $hashed_pwd = hashPassword($mot_de_passe);
+function insertMedecin($nom, $prenom, $tel, $email, $mdp, $adresse, $ville, $code_postal, $specialite, $type) {
     $conn = dbConnect();
-    if ($conn) {
-        try {
-            $stmt = $conn->prepare("INSERT INTO medecin (specialite_medecin, nom_medecin, prenom_medecin, mail_medecin, mdp_medecin, adresse_cabinet, ville_cabinet, code_postal_cabinet, telephone_cabinet, id_type_demande) VALUES (:specialite, :nom, :prenom, :mail, :mot_de_passe, :adresse, :ville, :code_postal, :telephone, :type_demande_id)");
-            $stmt->bindParam(':specialite', $specialite, PDO::PARAM_STR);
-            $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
-            $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
-            $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
-            $stmt->bindParam(':mot_de_passe', $hashed_pwd, PDO::PARAM_STR);
-            $stmt->bindParam(':adresse', $adresse, PDO::PARAM_STR);
-            $stmt->bindParam(':ville', $ville, PDO::PARAM_STR);
-            $stmt->bindParam(':code_postal', $code_postal, PDO::PARAM_INT);
-            $stmt->bindParam(':telephone', $telephone, PDO::PARAM_INT);
-            $stmt->bindParam(':type_demande_id', $type, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            echo 'Error : ' . $e->getMessage();
-        }
+    if (!$conn) {
+        return json_encode("Erreur de connexion à la base de données.");
+    }
+    $hashed_pwd = hashPassword($mdp);
+    if (!$hashed_pwd) {
+        return "Erreur lors du hashage du mot de passe.";
+    }
+
+    if (empty($code_postal) || !is_numeric($code_postal)) {
+        return "Le code postal doit être un nombre entier.";
+    }
+    if (empty($adresse)) {
+        return "L'adresse est obligatoire.";
+    }
+    
+
+    $sql = "INSERT INTO medecin (nom_medecin, prenom_medecin, telephone_cabinet, mail_medecin, mdp_medecin, adresse_cabinet, ville_cabinet, code_postal_cabinet, specialite_medecin, id_type_demande) 
+            VALUES (:nom, :prenom, :telephone, :mail, :mdp, :adresse, :ville, :code_postal, :specialite, :type)";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+        $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+        $stmt->bindParam(':telephone', $tel, PDO::PARAM_INT);
+        $stmt->bindParam(':mail', $email, PDO::PARAM_STR);
+        $stmt->bindParam(':mdp', $hashed_pwd, PDO::PARAM_STR);
+        $stmt->bindParam(':adresse', $adresse, PDO::PARAM_STR);
+        $stmt->bindParam(':ville', $ville, PDO::PARAM_STR);
+        $stmt->bindParam(':code_postal', $code_postal, PDO::PARAM_INT);
+        $stmt->bindParam(':specialite', $specialite, PDO::PARAM_STR);
+        $stmt->bindParam(':type', $type, PDO::PARAM_INT);
+        $stmt->execute();
+        return "Médecin ajouté avec succès.";
+    } catch (PDOException $e) {
+        return "Erreur lors de l'insertion du médecin : " . $e->getMessage();
     }
 }
+
 function getPasswordByEmail_Hash_Medecin($email){
     $conn = dbConnect();
     if ($conn) {
@@ -309,6 +315,39 @@ function medecinselectByNom($nom){
             echo 'Error : ' . $e->getMessage();
             return false;
         }
+    }
+}
+
+function update_medecin($id, $nom, $prenom, $tel, $email, $adresse, $ville, $code_postal, $specialite, $type) {
+    $conn = dbConnect();
+    if (!$conn) {
+        return json_encode("Erreur de connexion à la base de données.");
+    }
+
+    if (empty($code_postal) || !is_numeric($code_postal)) {
+        return "Le code postal doit être un nombre entier.";
+    }
+    if (empty($adresse)) {
+        return "L'adresse est obligatoire.";
+    }
+
+    $sql = "UPDATE medecin SET nom_medecin = :nom, prenom_medecin = :prenom, telephone_cabinet = :tel, mail_medecin = :email, adresse_cabinet = :adresse, ville_cabinet = :ville, code_postal_cabinet = :code_postal, specialite_medecin = :specialite, id_type_demande = :type WHERE id_medecin = :id";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+        $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+        $stmt->bindParam(':tel', $tel, PDO::PARAM_INT);
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->bindParam(':adresse', $adresse, PDO::PARAM_STR);
+        $stmt->bindParam(':ville', $ville, PDO::PARAM_STR);
+        $stmt->bindParam(':code_postal', $code_postal, PDO::PARAM_INT);
+        $stmt->bindParam(':specialite', $specialite, PDO::PARAM_STR);
+        $stmt->bindParam(':type', $type, PDO::PARAM_INT);
+        $stmt->execute();
+        return "Médecin modifié avec succès.";
+    } catch (PDOException $e) {
+        return "Erreur lors de la modification du médecin : " . $e->getMessage();
     }
 }
 

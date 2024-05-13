@@ -123,12 +123,12 @@ $(document).ready(function() {
                 <label for="from-email">Email</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend"><span class="input-group-text" aria-label="arobase">@</span></div>
-                    <input type="email" class="form-control" name="from-email" placeholder="Email" required>
+                    <input type="email" class="form-control" name="from-email" id="from-email" placeholder="Email" value="@gmail.com" required>
                 </div>
                 <label for="email-confirm">Confirmation Email</label>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend"><span class="input-group-text" aria-label="arobase">@</span></div>
-                    <input type="email" class="form-control" name="email-confirm" placeholder="Confirmation Email" required>
+                    <input type="email" class="form-control" name="email-confirm" id="email-confirm" placeholder="Confirmation Email" required>
                 </div>
                 <div class="form-group">
                     <label for="from-mdp">Mot de passe</label>
@@ -141,6 +141,7 @@ $(document).ready(function() {
                 <button type="submit" class="btn btn-primary">Valider</button>
                 <a class="nav-link" id="login_client_link">Vous avez déja un compte ?</a>
             </form>
+            <div id="message"></div>
         `);
     });
 
@@ -191,7 +192,7 @@ $(document).ready(function() {
         console.log(mdp);
 
         ajaxRequest('GET', './request.php/log_medecin?mail=' + encodeURIComponent(email) + '&mdp=' + encodeURIComponent(mdp), function(response) {
-            sessiondisplay(response);
+            sessiondisplaylog(response);
         });
         
     });
@@ -206,7 +207,7 @@ $(document).ready(function() {
         console.log(mdp);
 
         ajaxRequest('GET', './request.php/log_client?mail=' + encodeURIComponent(email) + '&mdp=' + encodeURIComponent(mdp), function(response) {
-            sessiondisplay(response);
+            sessiondisplaylog(response);
         });
         
 
@@ -221,29 +222,39 @@ $(document).ready(function() {
         var email = $('#from-email').val();
         var email_confirm = $('#email-confirm').val();
         var mdp = $('#from-mdp').val();
-        var typediv = $('#typeRDV').val();
         var mdp_confirm = $('#mdp-confirm').val();
-
-        console.log(nom);
-        console.log(prenom);
-        console.log(typediv);
-        console.log(tel);
+        var specialite = $('#specialite-select').val();
+        var type = $('#typeRDV').val();
+        var adresse = $('#from-adresse').val();
+        var ville = $('#from-ville').val();
+        var postal = $('#from-postal').val();
         console.log(email);
-        console.log(email_confirm);
-        console.log(mdp);
-        console.log(mdp_confirm);
-        ajaxRequest('POST', './request.php/register_client?nom=' + encodeURIComponent(nom) + '&prenom=' + encodeURIComponent(prenom) + '&tel=' + encodeURIComponent(tel) + '&mail=' + encodeURIComponent(email) + '&mail_confirm=' + encodeURIComponent(email_confirm) + '&mdp=' + encodeURIComponent(mdp) +'&mdp_confirm='+encodeURIComponent(mdp_confirm)+'&type='+encodeURIComponent(typediv),function(response) {
-            console.log("good");
+        console.log(adresse);
+
+        ajaxRequest('GET', './request.php/register_medecin?nom=' + encodeURIComponent(nom) + '&prenom=' + encodeURIComponent(prenom) + '&tel=' + encodeURIComponent(tel) + '&mail=' + encodeURIComponent(email) +'&mail_confirm=' + encodeURIComponent(email_confirm) + '&mdp=' + encodeURIComponent(mdp) +'&mdp_confirm=' + encodeURIComponent(mdp_confirm)+ '&specialite=' + encodeURIComponent(specialite) + '&type=' + encodeURIComponent(type) + '&adresse=' + encodeURIComponent(adresse) + '&ville=' + encodeURIComponent(ville) + '&code_postal=' + encodeURIComponent(postal), function(response) {
+            sessiondisplayregister(response);
+            
         });
+        
         
     });
 
     
     $(document).on("submit", "#client_register_form", function(event) {
         event.preventDefault();
-        
+        var nom = $('#form-lastname').val();
+        var prenom = $('#form-firstname').val();
+        var tel = $('#medecin_tel').val();
+        var email = $('#from-email').val();
+        var email_confirm = $('#email-confirm').val();
+        var mdp = $('#from-mdp').val();
+        var mdp_confirm = $('#mdp-confirm').val();
+        console.log(email);
+        ajaxRequest('GET', './request.php/register_client?nom=' + encodeURIComponent(nom) + '&prenom=' + encodeURIComponent(prenom) + '&tel=' + encodeURIComponent(tel) + '&mail=' + email +'&mail_confirm=' + encodeURIComponent(email_confirm)+ '&mdp=' + encodeURIComponent(mdp)+ '&mdp_confirm=' + encodeURIComponent(mdp_confirm),function(response) {
+            sessiondisplayregister(response);
+        });        
     });
-    function sessiondisplay(response) {
+    function sessiondisplaylog(response) {
         response = JSON.parse(response);
         var message = document.getElementById("message");
         if(response.email !== undefined) {
@@ -280,8 +291,84 @@ $(document).ready(function() {
           }
           </style>
           <div class="alert alert-danger" role="alert">
-            <span class="strong-hover-shake">Hover on me!</span>
+            <span class="strong-hover-shake">Probleme d'autentification...</span>
           </div>`;
+        }
+
+    }
+    function sessiondisplayregister(reponse){
+        reponse = JSON.parse(reponse);
+        var message = document.getElementById("message");
+        if(reponse == "1"){
+            message.innerHTML = `<style>
+            .alert {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-danger" role="alert">
+                <span class="strong-hover-shake">Les adresses email ne correspondent pas</span>
+            </div>`;
+        }
+        else if(reponse == "2"){
+            message.innerHTML = `<style>
+            .alert {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-danger" role="alert">
+                <span class="strong-hover-shake">Les mots de passe ne correspondent pas</span>
+            </div>`;
+        }
+        else if(reponse == "3"){
+            message.innerHTML = `<style>
+            .alert {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-danger" role="alert">
+                <span class="strong-hover-shake">L'adresse email est déjà utilisée</span>
+            </div>`;
+        }
+        else if(reponse == "4"){
+            message.innerHTML = `<style>
+            .alert {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-danger" role="alert">
+                <span class="strong-hover-shake">Probleme de connection desolé...</span>
+            </div>`;
+        }
+        else{
+            message.innerHTML = `<style>
+            .alert {
+                width: 400px;
+                margin: 0 auto;
+                text-align: center;
+            }
+            </style>
+            <div class="alert alert-success" role="alert">
+                <span class="strong-hover-shake">${reponse}</span>
+            </div>`;
+            if(reponse == "Médecin ajouté avec succès."){
+                ajaxRequest('GET', './request.php/log_medecin?mail=' + encodeURIComponent(email) + '&mdp=' + encodeURIComponent(mdp), function(response) {
+                    sessiondisplaylog(response);
+                });
+            }else{
+                ajaxRequest('GET', './request.php/log_client?mail=' + encodeURIComponent(email) + '&mdp=' + encodeURIComponent(mdp), function(response) {
+                    sessiondisplaylog(response);
+                });
+            }
+
+
         }
     }
 });

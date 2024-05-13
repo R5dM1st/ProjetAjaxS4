@@ -92,25 +92,33 @@ function emailExisteClient($email){
         }
     }
 }
-function insertClient($nom, $prenom, $telephone, $mail, $mot_de_passe){
-    $hashed_pwd = hashPassword($mot_de_passe);
+function insertClient($nom, $prenom, $telephone, $mail, $mot_de_passe) {
     $conn = dbConnect();
-    if ($conn) {
-        try {
-            $stmt=$conn->prepare("INSERT INTO client (nom_client, prenom_client, telephone_client, mail_client, mot_de_passe_client) VALUES (:nom, :prenom, :telephone, :mail, :mot_de_passe)");
-            $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
-            $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
-            $stmt->bindParam(':telephone', $telephone, PDO::PARAM_INT);
-            $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
-            $stmt->bindParam(':mot_de_passe', $hashed_pwd, PDO::PARAM_STR);
-            $stmt->execute();
-            
-            echo "Ajouté";
-        } catch (PDOException $e) {
-            echo 'Error : ' . $e->getMessage();
-        }
+    if (!$conn) {
+        return json_encode("Erreur de connexion à la base de données.");
+    }
+
+    $hashed_pwd = hashPassword($mot_de_passe);
+    if (!$hashed_pwd) {
+        return "Erreur lors du hashage du mot de passe.";
+    }
+
+    $sql = "INSERT INTO client (nom_client, prenom_client, telephone_client, mail_client, mot_de_passe_client) 
+            VALUES (:nom, :prenom, :telephone, :mail, :mot_de_passe)";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+        $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+        $stmt->bindParam(':telephone', $telephone, PDO::PARAM_STR);
+        $stmt->bindParam(':mail', $mail, PDO::PARAM_STR);
+        $stmt->bindParam(':mot_de_passe', $hashed_pwd, PDO::PARAM_STR);
+        $stmt->execute();
+        return "Client ajouté avec succès.";
+    } catch (PDOException $e) {
+        return "Erreur lors de l'insertion du client : " . $e->getMessage();
     }
 }
+
 function getPasswordByEmail_Hash_Client($email) {
     $conn = dbConnect();
     if ($conn) {
