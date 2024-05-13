@@ -1,5 +1,5 @@
 
-function ajaxRequest(method, url, callback) {
+function ajaxRequest(method, url, callback,data=null) {
   var xhr = new XMLHttpRequest();
   xhr.open(method, url, true);
   xhr.onreadystatechange = function () {
@@ -7,7 +7,7 @@ function ajaxRequest(method, url, callback) {
           callback(xhr.responseText);
       }
   };
-  xhr.send();
+  xhr.send(data);
 }
 const typeProfile = sessionStorage.getItem('profile');
 const email = sessionStorage.getItem('email');
@@ -556,6 +556,10 @@ function displayEditForm(client) {
   var cardBodyDiv = document.querySelector('.card-body');
   cardBodyDiv.innerHTML = `
     <form id="editForm">
+    <div class="form-group">
+        <label for="nom">Id:</label>
+        <input type="text" id="id" name="id" value="${client.client_id}">
+      </div>
       <div class="form-group">
         <label for="nom">Nom:</label>
         <input type="text" id="nom" name="nom" value="${client.nom_client}">
@@ -577,7 +581,9 @@ function displayEditForm(client) {
   `;
   $('#editButton').on('click', function(event) {
     event.preventDefault();
-    ajaxRequest('GET', './request.php/medecin?nom='+encodeURIComponent(client.nom)+'&prenom='+encodeURIComponent(client.prenom)+'&tel='+encodeURIComponent(client.tel)+'&mail='+encodeURIComponent(client.mail)+'&postal='+encodeURIComponent(client.postal)+'&adresse='+encodeURIComponent(client.adresse)+'&ville='+encodeURIComponent(client.ville), function(response) {
+    //ajaxRequest('PUT', './request.php/update_client?client_id='+encodeURIComponent(client.client_id)+'&nom_client='+encodeURIComponent(client.nom_client)+'&prenom_client='+encodeURIComponent(client.prenom_client)+'&telephone_client='+encodeURIComponent(client.telephone_client)
+    
+    ajaxRequest('PUT', './request.php/update_client', function(response) {
       var successMessage = document.createElement('p');
       successMessage.innerHTML = `<style>
         .alert {
@@ -591,7 +597,7 @@ function displayEditForm(client) {
         Profile modifié
       </div>`;
       cardBodyDiv.appendChild(successMessage);
-  });
+  },'prenom='+client.prenom_client +'&nom='+client.nom_client+'&tel='+ client.telephone_client);
 });
 }
 function displayRdvShowMedecin(response) {

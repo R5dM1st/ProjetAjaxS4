@@ -12,6 +12,7 @@ $request_uri = $_SERVER['REQUEST_URI'];
 $params = parse_url($request_uri, PHP_URL_QUERY);
 parse_str($params, $query_params);
 $nom = $query_params['nom'] ?? '';
+
 $prenom = $query_params['prenom'] ?? '';
 $tel = $query_params['tel'] ?? '';
 $email = $query_params['mail'] ?? '';
@@ -255,10 +256,9 @@ switch ($requestRessource) {
                                 header("HTTP/1.0 405 Method Not Allowed");
                                 break;
                         }
-              
-                 
                     
                         break;
+
                     case 'heure_special':
                         switch ($request_method) {
                             case 'POST':
@@ -306,7 +306,18 @@ switch ($requestRessource) {
                             break;
                     }
                     break;
+                case 'update_client':
+                    echo "case validé";
+                    switch($request_method){
+                        case 'PUT':
+                            $data = update_client($id_client,$nom,$prenom,$tel);
+                            echo "testFonctionne";
+                            break;
                     
+                        default:
+                            header("HTTP/1.0 405 Method Not Allowed"); 
+                            break;  
+                    }
     }
 
     header('Content-Type: application/json');

@@ -141,3 +141,25 @@ function getPasswordByEmail_Hash_Client($email) {
     }
     return null;
 }
+
+function update_client($id, $nom, $prenom, $tel) {
+    $conn = dbConnect();
+    if (!$conn) {
+        return json_encode("Erreur de connexion à la base de données.");
+    }
+
+    $sql = "UPDATE client SET nom_client = :nom, prenom_client = :prenom, telephone_client = :tel WHERE client_id = :id";
+    try {
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':nom', $nom, PDO::PARAM_STR);
+        $stmt->bindParam(':prenom', $prenom, PDO::PARAM_STR);
+        $stmt->bindParam(':tel', $tel, PDO::PARAM_INT);
+        //$stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        echo "ça fonctionne";
+        return "Informations modifiées avec succès.";
+    } catch (PDOException $e) {
+        return "Erreur lors de la modification des informations : " . $e->getMessage();
+    }
+}
