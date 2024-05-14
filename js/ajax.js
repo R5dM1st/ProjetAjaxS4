@@ -2,6 +2,7 @@
 function ajaxRequest(method, url, callback,data=null) {
   var xhr = new XMLHttpRequest();
   xhr.open(method, url, true);
+  
   xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
           callback(xhr.responseText);
@@ -587,22 +588,27 @@ function displayEditForm(client) {
     var mail = document.getElementById("mail").value;
     var id_client = client.client_id
     
-    ajaxRequest('GET', './request.php/update_client/?id_client='+id_client+'&prenom='+prenom +'&nom='+nom+'&tel='+ telephone+'&mail='+mail, function(response) {
-      var successMessage = document.createElement('p');
-      successMessage.innerHTML = `<style>
-        .alert {
-          width: 400px;
-          margin: 0 auto;
-          margin-top: 20px;
-          text-align: center;
-        }
-      </style>
-      <div class="alert alert-success" role="alert">
-        Profile modifié
-      </div>`;
-      cardBodyDiv.appendChild(successMessage);
+    /*ajaxRequest('GET', './request.php/update_client/?id_client='+id_client+'&prenom='+prenom +'&nom='+nom+'&tel='+ telephone+'&mail='+mail, function(response)*/
+      
+  var putData ='id_client='+id_client+'&prenom='+prenom+'&nom='+nom+'&telephone='+telephone+'&mail='+mail
+  ajaxRequest('PUT','./request.php/update_client/',successMessage,putData)
 
-  });
+  function successMessage(){
+    var successMessage = document.createElement('p');
+        successMessage.innerHTML = `<style>
+          .alert {
+            width: 400px;
+            margin: 0 auto;
+            margin-top: 20px;
+            text-align: center;
+          }
+        </style>
+        <div class="alert alert-success" role="alert">
+          Profile modifié
+        </div>`;
+        cardBodyDiv.appendChild(successMessage);
+
+  }
   });
 }
 

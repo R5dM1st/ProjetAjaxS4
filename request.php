@@ -36,6 +36,12 @@ $adresse = $query_params['adresse'] ??'';
 $data = false;
 $id = array_shift($request);
 $info = array_shift($request);
+
+
+
+
+
+
 if ($id == '') {
     $id = NULL;
 }
@@ -307,13 +313,21 @@ switch ($requestRessource) {
                     }
                     break;
                 case 'update_client':
+                    //parse_str(file_get_contents("php://input"), $putData);
                     switch($request_method){
-                        case 'GET':
-                            echo "switch validé";
-                            $data = update_client($id_client,$nom,$prenom,$tel,$email);
+                            
+                        case 'PUT':   
+                            //$id_client = $_PUT['id_client'];
+                            parse_str(file_get_contents("php://input"), $putData);
+                            echo $id_client;
+
+
+                            //echo "putValid";
+                            $data = update_client($id_client,$putData['nom'],$putData['prenom'],$putData['tel'],$putData['mail']);
                             break;
                     
                         default:
+                            echo "switch non valide";
                             header("HTTP/1.0 405 Method Not Allowed"); 
                             break;  
                     }
