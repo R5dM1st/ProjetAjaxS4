@@ -581,9 +581,13 @@ function displayEditForm(client) {
   `;
   $('#editButton').on('click', function(event) {
     event.preventDefault();
-    //ajaxRequest('PUT', './request.php/update_client?client_id='+encodeURIComponent(client.client_id)+'&nom_client='+encodeURIComponent(client.nom_client)+'&prenom_client='+encodeURIComponent(client.prenom_client)+'&telephone_client='+encodeURIComponent(client.telephone_client)
+    var nom = document.getElementById("nom").value;
+    var prenom = document.getElementById("prenom").value;
+    var telephone = document.getElementById("telephone").value;
+    var mail = document.getElementById("mail").value;
+    var id_client = client.client_id
     
-    ajaxRequest('PUT', './request.php/update_client', function(response) {
+    ajaxRequest('GET', './request.php/update_client/?id_client='+id_client+'&prenom='+prenom +'&nom='+nom+'&tel='+ telephone+'&mail='+mail, function(response) {
       var successMessage = document.createElement('p');
       successMessage.innerHTML = `<style>
         .alert {
@@ -597,9 +601,11 @@ function displayEditForm(client) {
         Profile modifié
       </div>`;
       cardBodyDiv.appendChild(successMessage);
-  },'prenom='+client.prenom_client +'&nom='+client.nom_client+'&tel='+ client.telephone_client);
-});
+
+  });
+  });
 }
+
 function displayRdvShowMedecin(response) {
   var rdvInfo = document.getElementById('info');
   rdvInfo.innerHTML = '';

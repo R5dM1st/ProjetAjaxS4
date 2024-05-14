@@ -11,8 +11,8 @@ $request_uri = $_SERVER['REQUEST_URI'];
 
 $params = parse_url($request_uri, PHP_URL_QUERY);
 parse_str($params, $query_params);
-$nom = $query_params['nom'] ?? '';
 
+$nom = $query_params['nom'] ?? '';
 $prenom = $query_params['prenom'] ?? '';
 $tel = $query_params['tel'] ?? '';
 $email = $query_params['mail'] ?? '';
@@ -307,11 +307,10 @@ switch ($requestRessource) {
                     }
                     break;
                 case 'update_client':
-                    echo "case validé";
                     switch($request_method){
-                        case 'PUT':
-                            $data = update_client($id_client,$nom,$prenom,$tel);
-                            echo "testFonctionne";
+                        case 'GET':
+                            echo "switch validé";
+                            $data = update_client($id_client,$nom,$prenom,$tel,$email);
                             break;
                     
                         default:
