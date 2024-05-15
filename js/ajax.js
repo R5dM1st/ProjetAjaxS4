@@ -588,10 +588,8 @@ function displayEditForm(client) {
     var mail = document.getElementById("mail").value;
     var id_client = client.client_id
     
-    /*ajaxRequest('GET', './request.php/update_client/?id_client='+id_client+'&prenom='+prenom +'&nom='+nom+'&tel='+ telephone+'&mail='+mail, function(response)*/
-      
-  var putData ='id_client='+id_client+'&prenom='+prenom+'&nom='+nom+'&telephone='+telephone+'&mail='+mail
-  ajaxRequest('PUT','./request.php/update_client/',successMessage,putData)
+    ajaxRequest('PUT','./request.php/update_client?id='+id_client+'&nom='+nom+'&prenom='+prenom+'&tel='+telephone+'&mail='+mail,successMessage);
+  
 
   function successMessage(){
     var successMessage = document.createElement('p');

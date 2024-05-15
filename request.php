@@ -81,22 +81,29 @@ switch ($requestRessource) {
         case 'register_client':
             switch ($request_method) {
                 case 'GET':
-                    $email=urldecode($email);
-                    $email_confirm=urldecode($email_confirm);
                         $email_existe = emailExisteClient($email);
                         if ($email !== $email_confirm) {
                             $data = "1";
+                            break;
                         } elseif ($mdp !== $mdp_confirm) {
                             $data = "2";
+                            break;
                         } elseif ($email_existe == true) {
                             $data = "3";
+                            break;
                         } else {
-                            $data = insertClient($nom, $prenom, $tel, $email, $mdp);
+                            $data = "0";
+                            break;
                         }
-                    break;
-                default:
-                    header("HTTP/1.0 405 Method Not Allowed");
-                    break;
+                        
+                    case 'POST':
+                        if($nom!=""&&$prenom!=""&&$tel!=""&&$email!=""&&$mdp){
+                            insertClient($nom, $prenom, $tel, $email, $mdp);
+                            break;
+                        }
+                        default:
+                            header("HTTP/1.0 405 Method Not Allowed");
+                            break;
             }
             break;
 
@@ -118,19 +125,28 @@ switch ($requestRessource) {
         case 'register_medecin':
             switch ($request_method) {
                 case 'GET':
-                    $email=urldecode($email);
-                    $email_confirm=urldecode($email_confirm);
                         $email_existe = emailExisteMedecin($email);
-                        if ($email !== $email_confirm) {
+                        if ($email != $email_confirm) {
                             $data = "1";
-                        } elseif ($mdp !== $mdp_confirm) {
+                            break;
+                        } elseif ($mdp != $mdp_confirm) {
                             $data = "2";
+                            break;
                         } elseif ($email_existe == true) {
                             $data = "3";
-                        } else {
-                            $data = insertMedecin($nom, $prenom, $tel, $email, $mdp, $adresse, $ville, $code_postal, $specialite, $type);
+                            break;
+                        }else{
+                            $data = "0";
+                            break;
                         }
-                    break;
+                        
+                    
+                    case 'POST':
+                        if($nom!=""&&$prenom!=""&&$tel!=""&&$email!=""&&$mdp!=""&&$adresse!=""&&$ville!=""&&$code_postal!=""&&$specialite!=""&&$type!=""){
+                            $hash_mdp=hashPassword($mdp);
+                            insertMedecin($nom, $prenom, $tel, $email, $hash_mdp, $adresse, $ville, $code_postal, $specialite, $type);
+                            break;
+                        }
                 default:
                     header("HTTP/1.0 405 Method Not Allowed");
                     break;
@@ -178,7 +194,6 @@ switch ($requestRessource) {
                     case 'POST':
                         
                             prendreRendezVous($id_client,$id_medecin,$date,$heure);
-                            $data = "Rendez-vous pris avec succès";
                         
                         break;
                     default:
@@ -312,25 +327,7 @@ switch ($requestRessource) {
                             break;
                     }
                     break;
-                case 'update_client':
-                    //parse_str(file_get_contents("php://input"), $putData);
-                    switch($request_method){
-                            
-                        case 'PUT':   
-                            //$id_client = $_PUT['id_client'];
-                            parse_str(file_get_contents("php://input"), $putData);
-                            echo $id_client;
-
-
-                            //echo "putValid";
-                            $data = update_client($id_client,$putData['nom'],$putData['prenom'],$putData['tel'],$putData['mail']);
-                            break;
                     
-                        default:
-                            echo "switch non valide";
-                            header("HTTP/1.0 405 Method Not Allowed"); 
-                            break;  
-                    }
     }
 
     header('Content-Type: application/json');
