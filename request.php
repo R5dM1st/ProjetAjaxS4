@@ -70,14 +70,15 @@ switch ($requestRessource) {
                     $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Client($email);
                     if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
                         $data = array('prenom' => getPrenomByEmailClient($email), 'nom' => getNomByEmailClient($email), 'email' => $email, 'profile' => 1, 'id' => getClientId($email));
-                    } else {
-                        $data = false;
+                        break;
                     }
                 }
                 break;
-        }
-        break;
-
+                default:
+                    header("HTTP/1.0 405 Method Not Allowed");
+                    break;
+            }
+            break;
         case 'register_client':
             switch ($request_method) {
                 case 'GET':
@@ -107,51 +108,53 @@ switch ($requestRessource) {
             }
             break;
 
-    case 'log_medecin':
-        switch ($request_method) {
-            case 'GET':
-                if ($email != '' && $mdp != '') { 
-                    $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
-                    if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
-                        $data = array('prenom' => getPrenomByEmailMedecin($email), 'nom' => getNomByEmailMedecin($email), 'email' => $email, 'profile' => 2, 'id' => getMedecinId($email));
-                    } else {
-                        $data = false;
-                    }
-                }
-                break;
-        }
-        break;
-                   
-        case 'register_medecin':
+        case 'log_medecin':
             switch ($request_method) {
                 case 'GET':
-                        $email_existe = emailExisteMedecin($email);
-                        if ($email != $email_confirm) {
-                            $data = "1";
+                    if ($email != '' && $mdp != '') { 
+                        $hashedPasswordFromDatabase = getPasswordByEmail_Hash_Medecin($email);
+                        if ($hashedPasswordFromDatabase !== null && password_verify($mdp, $hashedPasswordFromDatabase)) {
+                            $data = array('prenom' => getPrenomByEmailMedecin($email), 'nom' => getNomByEmailMedecin($email), 'email' => $email, 'profile' => 2, 'id' => getMedecinId($email));
                             break;
-                        } elseif ($mdp != $mdp_confirm) {
-                            $data = "2";
-                            break;
-                        } elseif ($email_existe == true) {
-                            $data = "3";
-                            break;
-                        }else{
-                            $data = "0";
-                            break;
-                        }
-                        
-                    
-                    case 'POST':
-                        if($nom!=""&&$prenom!=""&&$tel!=""&&$email!=""&&$mdp!=""&&$adresse!=""&&$ville!=""&&$code_postal!=""&&$specialite!=""&&$type!=""){
-                            $hash_mdp=hashPassword($mdp);
-                            insertMedecin($nom, $prenom, $tel, $email, $hash_mdp, $adresse, $ville, $code_postal, $specialite, $type);
-                            break;
-                        }
-                default:
-                    header("HTTP/1.0 405 Method Not Allowed");
+                        } 
+                    }
                     break;
-            }
-            break;
+                    default:
+                        header("HTTP/1.0 405 Method Not Allowed");
+                        break;
+                }
+                break;
+                   
+            case 'register_medecin':
+                switch ($request_method) {
+                    case 'GET':
+                            $email_existe = emailExisteMedecin($email);
+                            if ($email != $email_confirm) {
+                                $data = "1";
+                                break;
+                            } elseif ($mdp != $mdp_confirm) {
+                                $data = "2";
+                                break;
+                            } elseif ($email_existe == true) {
+                                $data = "3";
+                                break;
+                            }else{
+                                $data = "0";
+                                break;
+                            }
+                            
+                        
+                        case 'POST':
+                            if($nom!=""&&$prenom!=""&&$tel!=""&&$email!=""&&$mdp!=""&&$adresse!=""&&$ville!=""&&$code_postal!=""&&$specialite!=""&&$type!=""){
+                                $hash_mdp=hashPassword($mdp);
+                                insertMedecin($nom, $prenom, $tel, $email, $hash_mdp, $adresse, $ville, $code_postal, $specialite, $type);
+                                break;
+                            }
+                    default:
+                        header("HTTP/1.0 405 Method Not Allowed");
+                        break;
+                }
+                break;
             
         
 
