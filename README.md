@@ -47,6 +47,6 @@ n'oubliez pas de inseret la BDD.sql :
 psql -U postgres -d votre_base -f BDD.sql
 puis: insert_BDD.sql
 
+
+
 fait par Emile Duplais et Pierre Zboril
-
-
