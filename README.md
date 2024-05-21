@@ -2,11 +2,13 @@ Bienvenue sur notre site de EPHealth.
 Vous avez besoin de soin ? venez prendre RDV sur notre site web. 
 Vous avez besoin de visibilité entant que medecin ? venez poster des RDV sur notre site web.
 
-Voici l'arborescence:
+pour utiliser notre site web vous aurez besoin de PostgreSQL 15.6 et de Apache/2.4.57
+
+Voici l'arborescence de notre projet:
 /EPHealth_website
 │
 ├── /css
-│   ├── styles.css
+│   ├── accueil.css
 │
 ├── /js
 │   ├── main.js
@@ -40,3 +42,11 @@ Voici l'arborescence:
 ├── database.php
 │
 └── README.md
+
+n'oubliez pas de inseret votre BDD.sql : 
+psql -U postgres -d votre_base -f BDD.sql
+puis: insert_BDD.sql
+
+fait par Emile Duplais et Pierre Zboril
+
+
