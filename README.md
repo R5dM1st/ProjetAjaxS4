@@ -43,7 +43,7 @@ Voici l'arborescence de notre projet:
 │
 └── README.md
 
-n'oubliez pas de inseret votre BDD.sql : 
+n'oubliez pas de inseret la BDD.sql : 
 psql -U postgres -d votre_base -f BDD.sql
 puis: insert_BDD.sql
 
